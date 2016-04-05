@@ -9,6 +9,7 @@ class Teacher(object):
 
     def __init__(self, id_to_line_dict, effect_id, config, pattern_assistant):
         self._lines = id_to_line_dict.copy()
+        self.constraints = {}
         self.rule_intent = UserRuleIntent(effect_id)
         self.config = config
         self.pattern_assistant = pattern_assistant
@@ -26,24 +27,31 @@ class Teacher(object):
         """
         Loads text pattern proposed by user, verifies if it matches line text.
         """
+        #TODO implicate pattern update and constraint removal
         pass
 
-    def make_groups(self, groups):
+    def make_group(self, line_id, span):
         """
         Improves text patterns by adding to them groups corresponding to params in text.
         """
+        #TODO implicate pattern update, constraint update -> groups indexing
+        pass
+
+    def remove_group(self, line_id, group):
+        #TODO implicates pattern update and constraint update/remove (hetero)?
         pass
 
     def guess_pattern(self, line_id):
         """
         Guess text pattern for line text.
         """
+        #TODO implicate pattern update and constraint removal
         pass
 
-    def set_convertion(self, group, conversion):
+    def set_convertion(self, line_id, group, conversion):
         pass
 
-    def set_primary_key(self, groups):
+    def set_primary_key(self, line_id, groups):
         pass
 
     def set_log_type(self, line_id, log_type):
@@ -66,6 +74,12 @@ class Teacher(object):
         """
         Verifies if text patterns and constraints meet all requirements.
         E.g it is required text pattern match its line in one way only.
+        """
+        pass
+
+    def get_rule(self):
+        """
+        Creates rule for Front, that will be shown to user
         """
         pass
 
