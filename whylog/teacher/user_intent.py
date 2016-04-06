@@ -1,8 +1,10 @@
+#TODO more unniversal: pattern_name, pattern
 class UserParserIntent(object):
-    def __init__(self, regex_name, log_type_name, regex, primary_key_groups, data_conversions=None):
+    def __init__(self, regex_name, regex, sample_line, log_type_name, primary_key_groups, data_conversions=None):
         self.regex_name = regex_name
-        self.log_type_name = log_type_name
         self.regex = regex
+        self.sample_line = sample_line
+        self.log_type_name = log_type_name
         self.primary_key_groups = primary_key_groups
         self.data_conversions = data_conversions or {}
 

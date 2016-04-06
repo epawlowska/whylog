@@ -7,14 +7,15 @@ class Teacher(object):
     Enable teaching new rule. One Teacher per one entering rule.
     """
 
-    def __init__(self, id_to_line_dict, effect_id, config, pattern_assistant):
-        self._lines = id_to_line_dict.copy()
+    def __init__(self, effect_line, effect_id, config, pattern_assistant):
+        self._lines = {effect_id: effect_line}
         self.constraints = {}
         self.rule_intent = UserRuleIntent(effect_id)
         self.config = config
         self.pattern_assistant = pattern_assistant
 
     def add_line(self, line_id, line_object):
+        #TODO: check for existing line_id
         self._lines[line_id] = line_object
 
     def remove_line(self, line_id):
