@@ -2,27 +2,45 @@ from whylog.teacher.mock_outputs import create_sample_rule
 from whylog.teacher.user_intent import UserRuleIntent
 
 
+class TeacherParser(object):
+    def __init__(self, line_object):
+        self.line = line_object
+        self.pattern_name = None
+        self.log_type = None
+        self.primary_keys = []
+
+
+class TeacherConstraint(object):
+    def __init__(self):
+        self.constr_type = None
+        self.params = {}
+
+
 class Teacher(object):
     """
     Enable teaching new rule. One Teacher per one entering rule.
     """
 
-    def __init__(self, effect_line, effect_id, config, pattern_assistant):
-        self._lines = {effect_id: effect_line}
-        self.constraints = {}
-        self.rule_intent = UserRuleIntent(effect_id)
+    def __init__(self, effect_id, effect_line, config, pattern_assistant):
+        self._constraints = {}
+        self._parsers = {}
+        self._constraint_database = []  # list of tuples (line_id, group_no, constr_id)
+        self.effect_id = effect_id
+        self.add_line(effect_id, effect_line)
+
         self.config = config
         self.pattern_assistant = pattern_assistant
 
+
     def add_line(self, line_id, line_object):
         #TODO: check for existing line_id
-        self._lines[line_id] = line_object
+        self._parsers[line_id] = TeacherParser(line_object)
+        self.pattern_assistant.add_line(line_id, line_object)
 
     def remove_line(self, line_id):
-        del self._lines[line_id]
-        if line_id == self.effect_id:
-            # TODO: do something that represents warning "No effect line, remember to add it!"
-            pass
+        #TODO check for existing line_id, prevent line_effect_id removal
+        del self._parsers[line_id]
+        self.pattern_assistant.remove_line(line_id)
 
     def update_pattern(self, line_id, proposed_pattern):
         """
@@ -77,6 +95,11 @@ class Teacher(object):
         E.g it is required text pattern match its line in one way only.
         """
         pass
+
+    def prepare_rule(self):
+        """
+        :return UserRuleIntent
+        """
 
     def get_rule(self):
         """

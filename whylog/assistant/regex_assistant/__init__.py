@@ -50,6 +50,11 @@ class RegexAssistant(AbstractAssistant):
         """
         raise NotImplementedError
 
+    def groups(self, line_id):
+        """
+        :return: list [(group_content, converter)] for line
+        """
+
     def guess(self, line_id):
         """
         Guess regex. It includes guessing date and other regex groups.
