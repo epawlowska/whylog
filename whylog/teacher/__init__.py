@@ -21,19 +21,19 @@ class Teacher(object):
     Enable teaching new rule. One Teacher per one entering rule.
     """
 
-    def __init__(self, effect_id, effect_line, config, pattern_assistant):
+    def __init__(self, config, pattern_assistant):
         self._constraints = {}
         self._parsers = {}
-        self._constraint_database = []  # list of tuples (line_id, group_no, constr_id)
-        self.effect_id = effect_id
-        self.add_line(effect_id, effect_line)
+        self._group_constraint_matching = []  # list of tuples (line_id, group_no, constr_id)
+        self.effect_id = None
 
         self.config = config
         self.pattern_assistant = pattern_assistant
 
-
-    def add_line(self, line_id, line_object):
+    def add_line(self, line_id, line_object, effect=False):
         #TODO: check for existing line_id
+        if effect:
+            self.effect_id = line_id
         self._parsers[line_id] = TeacherParser(line_object)
         self.pattern_assistant.add_line(line_id, line_object)
 
@@ -56,7 +56,7 @@ class Teacher(object):
         #TODO implicate pattern update, constraint update -> groups indexing
         pass
 
-    def remove_group(self, line_id, group):
+    def remove_group(self, line_id, group_id):
         #TODO implicates pattern update and constraint update/remove (hetero)?
         pass
 
@@ -67,7 +67,10 @@ class Teacher(object):
         #TODO implicate pattern update and constraint removal
         pass
 
-    def set_convertion(self, line_id, group, conversion):
+    def set_pattern_name(self, line_id, name):
+        pass
+
+    def set_converter(self, line_id, group, converter):
         pass
 
     def set_primary_key(self, line_id, groups):
@@ -105,6 +108,9 @@ class Teacher(object):
         """
         Creates rule for Front, that will be shown to user
         """
+        pass
+
+    def test_rule(self):
         pass
 
     def save(self):
