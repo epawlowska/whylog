@@ -1,8 +1,8 @@
 class UserParserIntent(object):
     def __init__(self, regex_name, log_type_name, regex, primary_key_groups, data_conversions=None):
         self.regex_name = regex_name
-        self.regex = regex
         self.log_type_name = log_type_name
+        self.regex = regex
         self.primary_key_groups = primary_key_groups
         self.data_conversions = data_conversions or {}
 
