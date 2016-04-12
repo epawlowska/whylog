@@ -22,8 +22,8 @@ class Teacher(object):
     """
 
     def __init__(self, config, pattern_assistant):
-        self._constraints = {}
-        self._parsers = {}
+        self._constraints = {}  # dict of TeacherConstraint
+        self._parsers = {}  # dict of TeacherParsers
         self._group_constraint_matching = []  # list of tuples (line_id, group_no, constr_id)
         self.effect_id = None
 
@@ -99,7 +99,7 @@ class Teacher(object):
         """
         pass
 
-    def prepare_rule(self):
+    def _prepare_rule(self):
         """
         :return UserRuleIntent
         """

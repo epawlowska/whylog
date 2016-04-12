@@ -1,6 +1,5 @@
 from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent, UserRuleIntent
 
-#TODO: update to be consistent with user_intent.py
 
 def create_sample_rule():
     # Constraint types
