@@ -84,14 +84,39 @@ class TimeConstraint(AbstractConstraint):
 
 
 class IdenticalConstraint(AbstractConstraint):
-    def __init__(self, groups, params):
-        pass
+    """
+    Contents of groups must be identical.
+    """
+
+    type = ConstraintType.IDENTICAL
+
+    def __init__(self, param_dict, groups):
+        """
+        I.e:
+        IdenticalConstraint(
+            dict(),
+            [(1, 2), (2, 4)]
+        )
+        """
+        super(IdenticalConstraint, self).__init__(param_dict, groups)
+
+    def convert_to_user_constraint_intent(self):
+        return super(IdenticalConstraint, self).convert_to_user_constraint_intent()
 
     @classmethod
-    def verify(cls, group_contents, param_dict):
-        if len(group_contents) <= 1:
-            return False  # FIXME raise exception?
-        return all(group_contents[0] == group for group in group_contents)
+    def get_param_names(cls):
+        return []
+
+    @classmethod
+    def verify(cls, param_dict, group_contents):
+        if not len(set(group_contents)) == 1:
+            raise ConstraintVerificationError(cls.type, param_dict, group_contents)
+
+    # @classmethod
+    # def verify(cls, group_contents, param_dict):
+    #     if len(group_contents) <= 1:
+    #         return False  # FIXME raise exception?
+    #     return all(group_contents[0] == group for group in group_contents)
 
 
 class DifferentValueConstraint(AbstractConstraint):
