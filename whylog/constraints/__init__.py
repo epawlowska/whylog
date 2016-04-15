@@ -30,7 +30,7 @@ class IdenticalConstraint(AbstractConstraint):
 
 
 class DifferentValueConstraint(AbstractConstraint):
-    def __init__(self, grouops):
+    def __init__(self, groups):
         pass
 
 
