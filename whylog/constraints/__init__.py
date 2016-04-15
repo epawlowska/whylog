@@ -11,23 +11,24 @@ class AbstractConstraint(object):
 
 
 class TimeConstraint(AbstractConstraint):
-    def __init__(self, line_earlier, line_later, min_delta=None, max_delta=None):
+    def __init__(self, time_group_earlier, time_group, min_delta=None, max_delta=None):
         pass
 
 
-class IdenticalIntervals(AbstractConstraint):
-    def __init__(self, intervals):
+class IdenticalConstraint(AbstractConstraint):
+    def __init__(self, groups):
         pass
 
 
-class DifferentValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
+class DifferentValueConstraint(AbstractConstraint):
+    def __init__(self, grouops):
         pass
 
 
-class ValueDeltaIntervals(AbstractConstraint):
-    def __init__(self, interval_lower, interval_greater, min_delta=None, max_delta=None):
+class ValueDeltaConstraint(AbstractConstraint):
+    def __init__(self, group_lower, group_greater, min_delta=None, max_delta=None):
         """
         Sets Minimum and maximum difference between values of params (if values are numbers).
         """
         pass
+
