@@ -20,17 +20,7 @@ class IdenticalIntervals(AbstractConstraint):
         pass
 
 
-class AnyValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
-        pass
-
-
 class DifferentValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
-        pass
-
-
-class ConstIntervals(AbstractConstraint):
     def __init__(self, intervals):
         pass
 
