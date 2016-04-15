@@ -114,18 +114,27 @@ class IdenticalConstraint(AbstractConstraint):
 
 
 class DifferentValueConstraint(AbstractConstraint):
-    def __init__(self, groups):
+    """
+    Contents of groups must be different.
+    """
+
+    def __init__(self, param_dict, groups):
         pass
 
 
 class ValueDeltaConstraint(AbstractConstraint):
-    def __init__(self, group_lower, group_greater, min_delta=None, max_delta=None):
-        """
-        Sets Minimum and maximum difference between values of params (if values are numbers).
-        """
+    """
+    Value delta between values must be greater than 'min_delta' and lower than 'max_delta'
+    """
+
+    def __init__(self, param_dict, groups):
         pass
+
 
 class HeteroConstraint(AbstractConstraint):
-    def __init__(self, groups, identical_groups_conut):
-        pass
+    """
+    A number of groups must be identical, the rest must be different.
+    """
 
+    def __init__(self, param_dict, groups):
+        pass
