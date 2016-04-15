@@ -32,3 +32,7 @@ class ValueDeltaConstraint(AbstractConstraint):
         """
         pass
 
+class HeteroConstraint(AbstractConstraint):
+    def __init__(self, groups, identical_groups_conut):
+        pass
+
