@@ -50,8 +50,37 @@ class AbstractConstraint(object):
 
 
 class TimeConstraint(AbstractConstraint):
-    def __init__(self, time_group_earlier, time_group, min_delta=None, max_delta=None):
-        pass
+    """
+    Time delta between two dates must be greater 'max_delta' and lower then 'min_delta'
+    """
+
+    type = ConstraintType.TIME_DELTA
+
+    GROUP_EARLIER = 'group_earlier'
+    GROUP_LATER = 'group_later'
+    MIN_DELTA = 'min_delta'
+    MAX_DELTA = 'max_delta'
+
+    def __init__(self, param_dict, groups):
+        """
+        I.e:
+        TimeConstraint(
+            {'group_earlier': (3, 1), 'group_later': (4, 2), 'min_delta': 12, 'max_delta' 30},
+            list()
+        )
+        """
+        super(TimeConstraint, self).__init__(param_dict, groups)
+
+    def convert_to_user_constraint_intent(self):
+        return super(TimeConstraint, self).convert_to_user_constraint_intent()
+
+    @classmethod
+    def get_param_names(cls):
+        return [cls.GROUP_EARLIER, cls.GROUP_LATER, cls.MIN_DELTA, cls.MAX_DELTA]
+
+    @classmethod
+    def verify(cls, param_dict, group_contents):
+        raise NotImplementedError
 
 
 class IdenticalConstraint(AbstractConstraint):
