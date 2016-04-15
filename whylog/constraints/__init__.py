@@ -29,14 +29,15 @@ class IdenticalConstraint(AbstractConstraint):
         return all(group_contents[0] == group for group in group_contents)
 
 
-class DifferentValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
+class DifferentValueConstraint(AbstractConstraint):
+    def __init__(self, grouops):
         pass
 
 
-class ValueDeltaIntervals(AbstractConstraint):
-    def __init__(self, interval_lower, interval_greater, min_delta=None, max_delta=None):
+class ValueDeltaConstraint(AbstractConstraint):
+    def __init__(self, group_lower, group_greater, min_delta=None, max_delta=None):
         """
         Sets Minimum and maximum difference between values of params (if values are numbers).
         """
         pass
+
