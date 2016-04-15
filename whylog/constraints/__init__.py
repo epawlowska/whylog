@@ -29,17 +29,7 @@ class IdenticalConstraint(AbstractConstraint):
         return all(group_contents[0] == group for group in group_contents)
 
 
-class AnyValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
-        pass
-
-
 class DifferentValueIntervals(AbstractConstraint):
-    def __init__(self, intervals):
-        pass
-
-
-class ConstIntervals(AbstractConstraint):
     def __init__(self, intervals):
         pass
 
