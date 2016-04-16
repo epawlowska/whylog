@@ -47,6 +47,7 @@ class AbstractConstraint(object):
         Verifies constraint for given params and groups contents.
 
         """
+        raise NotImplementedError("Subclass should implement this")
 
 
 class TimeConstraint(AbstractConstraint):
