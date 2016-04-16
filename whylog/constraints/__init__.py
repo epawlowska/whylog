@@ -149,4 +149,3 @@ class HeteroConstraint(AbstractConstraint):
     """
     A number of groups must be identical, the rest must be different.
     """
-
