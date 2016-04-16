@@ -9,7 +9,14 @@ from whylog.teacher.user_intent import UserConstraintIntent
 
 @six.add_metaclass(ABCMeta)
 class AbstractConstraint(object):
-    type = 'undefined'
+    """
+    :param MIN_GROUPS_COUNT: minimal groups count needed to create constraint
+    :param MAX_GROUPS_COUNT: maximal groups count needed to create constraint
+    """
+
+    TYPE = 'undefined'
+    MIN_GROUPS_COUNT = None
+    MAX_GROUPS_COUNT = None
 
     @abstractmethod
     def __init__(self, param_dict, groups):
@@ -36,7 +43,7 @@ class AbstractConstraint(object):
 
         For Teacher and Config use while saving constraint into Whylog knowledge base.
         """
-        return UserConstraintIntent(self.type, self.groups, self.params)
+        return UserConstraintIntent(self.TYPE, self.groups, self.params)
 
     @classmethod
     def get_param_names(cls):
@@ -46,6 +53,18 @@ class AbstractConstraint(object):
         For Front to display param names to user and then ask user for param contents.
         """
         raise NotImplementedError("Subclass should implement this")
+
+    @classmethod
+    def get_groups_count(cls):
+        """
+        Returns minimal and maximal count of groups needed to create constraint.
+
+        For Front to ask user for proper count of groups.
+        0, 0 - no groups
+        2, None - at least 2 groups
+        2, 2 - exactly 2 groups
+        """
+        return cls.MIN_GROUPS_COUNT, cls.MAX_GROUPS_COUNT
 
     @classmethod
     def verify(cls, param_dict, group_contents):
@@ -62,7 +81,10 @@ class TimeConstraint(AbstractConstraint):
     Time delta between two dates must be greater than 'max_delta' and lower than 'min_delta'
     """
 
-    type = ConstraintType.TIME_DELTA
+    TYPE = ConstraintType.TIME_DELTA
+
+    MIN_GROUPS_COUNT = 0
+    MAX_GROUPS_COUNT = 0
 
     GROUP_EARLIER = 'group_earlier'
     GROUP_LATER = 'group_later'
@@ -87,6 +109,10 @@ class TimeConstraint(AbstractConstraint):
         return [cls.GROUP_EARLIER, cls.GROUP_LATER, cls.MIN_DELTA, cls.MAX_DELTA]
 
     @classmethod
+    def get_groups_count(cls):
+        return super(TimeConstraint, cls).get_groups_count()
+
+    @classmethod
     def verify(cls, param_dict, group_contents):
         #TODO
         raise NotImplementedError
@@ -97,7 +123,10 @@ class IdenticalConstraint(AbstractConstraint):
     Contents of groups must be identical.
     """
 
-    type = ConstraintType.IDENTICAL
+    TYPE = ConstraintType.IDENTICAL
+
+    MIN_GROUPS_COUNT = 2
+    MAX_GROUPS_COUNT = None
 
     def __init__(self, param_dict, groups):
         """
@@ -117,6 +146,10 @@ class IdenticalConstraint(AbstractConstraint):
         return []
 
     @classmethod
+    def get_groups_count(cls):
+        return super(IdenticalConstraint, cls).get_groups_count()
+
+    @classmethod
     def verify(cls, param_dict, group_contents):
         """
         I.e:
@@ -124,7 +157,7 @@ class IdenticalConstraint(AbstractConstraint):
         - verify({}, ['comp1', 'hello', 'comp1']) should raise error
         """
         if not len(set(group_contents)) == 1:
-            raise ConstraintVerificationError(cls.type, param_dict, group_contents)
+            raise ConstraintVerificationError(cls.TYPE, param_dict, group_contents)
 
 
 class DifferentValueConstraint(AbstractConstraint):
