@@ -5,6 +5,12 @@ from whylog.constraints.exceptions import ConstraintVerificationError
 
 
 class TestIdenticalConstraint(TestCase):
+    def test_get_param_names(self):
+        assert IdenticalConstraint.get_param_names() == []
+
+    def test_get_group_count(self):
+        assert IdenticalConstraint.get_groups_count() == (2, None)
+
     def test_verify_success(self):
         IdenticalConstraint.verify({}, ['comp1', 'comp1', 'comp1'])
 
