@@ -9,13 +9,14 @@ from whylog.teacher.user_intent import UserConstraintIntent
 
 @six.add_metaclass(ABCMeta)
 class AbstractConstraint(object):
-
     type = 'undefined'
 
     @abstractmethod
     def __init__(self, param_dict, groups):
         """
-        Creates constraint generally for Teacher and Front use.
+        Creates constraint object.
+
+        For Teacher and Front use while creating user rule.
 
         :param param_dict: dict of additional params of constraint
         :param groups: list of tuples (line_id, group_no),
@@ -30,14 +31,19 @@ class AbstractConstraint(object):
 
     @abstractmethod
     def convert_to_user_constraint_intent(self):
+        """
+        Converts constraint to UserConstraintIntent object.
+
+        For Teacher and Config use while saving constraint into Whylog knowledge base.
+        """
         return UserConstraintIntent(self.type, self.groups, self.params)
 
     @classmethod
     def get_param_names(cls):
         """
-        Returns names of constraint params.
+        Returns names of constraint additional params.
 
-        This method is for Front, who displays to user param names and asks user for param contents.
+        For Front to display param names to user and then ask user for param contents.
         """
         raise NotImplementedError("Subclass should implement this")
 
@@ -46,13 +52,14 @@ class AbstractConstraint(object):
         """
         Verifies constraint for given params and groups contents.
 
+        For LogReader and Teacher verification.
         """
         raise NotImplementedError("Subclass should implement this")
 
 
 class TimeConstraint(AbstractConstraint):
     """
-    Time delta between two dates must be greater 'max_delta' and lower then 'min_delta'
+    Time delta between two dates must be greater than 'max_delta' and lower than 'min_delta'
     """
 
     type = ConstraintType.TIME_DELTA
@@ -81,6 +88,7 @@ class TimeConstraint(AbstractConstraint):
 
     @classmethod
     def verify(cls, param_dict, group_contents):
+        #TODO
         raise NotImplementedError
 
 
@@ -110,6 +118,11 @@ class IdenticalConstraint(AbstractConstraint):
 
     @classmethod
     def verify(cls, param_dict, group_contents):
+        """
+        I.e:
+        - verify({}, ['comp1', 'comp1', 'comp1']) should pass
+        - verify({}, ['comp1', 'hello', 'comp1']) should raise error
+        """
         if not len(set(group_contents)) == 1:
             raise ConstraintVerificationError(cls.type, param_dict, group_contents)
 
@@ -119,17 +132,11 @@ class DifferentValueConstraint(AbstractConstraint):
     Contents of groups must be different.
     """
 
-    def __init__(self, param_dict, groups):
-        pass
-
 
 class ValueDeltaConstraint(AbstractConstraint):
     """
     Value delta between values must be greater than 'min_delta' and lower than 'max_delta'
     """
-
-    def __init__(self, param_dict, groups):
-        pass
 
 
 class HeteroConstraint(AbstractConstraint):
@@ -137,5 +144,3 @@ class HeteroConstraint(AbstractConstraint):
     A number of groups must be identical, the rest must be different.
     """
 
-    def __init__(self, param_dict, groups):
-        pass
