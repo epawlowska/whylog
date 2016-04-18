@@ -3,9 +3,7 @@ from abc import ABCMeta, abstractmethod
 import six
 
 from whylog.constraints.const import ConstraintType
-from whylog.constraints.exceptions import (
-    ConstraintVerificationError, ConstructorGroupsError, ConstructorParamsError
-)
+from whylog.constraints.exceptions import ConstructorGroupsError, ConstructorParamsError
 from whylog.teacher.user_intent import UserConstraintIntent
 
 
