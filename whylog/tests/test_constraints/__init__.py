@@ -12,12 +12,7 @@ class TestIdenticalConstraint(TestCase):
         assert IdenticalConstraint.get_groups_count() == (2, None)
 
     def test_verify_success(self):
-        IdenticalConstraint.verify({}, ['comp1', 'comp1', 'comp1'])
+        assert IdenticalConstraint.verify({}, ['comp1', 'comp1', 'comp1'])
 
     def test_verify_fail(self):
-        self.assertRaises(
-            ConstraintVerificationError,
-            IdenticalConstraint.verify,
-            {},
-            ['comp1', 'hello', 'comp1'],
-        )
+        assert not IdenticalConstraint.verify({}, ['comp1', 'hello', 'comp1'])

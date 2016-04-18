@@ -3,7 +3,9 @@ from abc import ABCMeta, abstractmethod
 import six
 
 from whylog.constraints.const import ConstraintType
-from whylog.constraints.exceptions import ConstraintVerificationError, ConstructorParamsError
+from whylog.constraints.exceptions import (
+    ConstraintVerificationError, ConstructorGroupsError, ConstructorParamsError
+)
 from whylog.teacher.user_intent import UserConstraintIntent
 
 
@@ -29,10 +31,6 @@ class AbstractConstraint(object):
         :param groups: list of tuples (line_id, group_no),
                        where line_id and group_no is inner numeration between Front and Teacher
         """
-        param_dict_keys = param_dict.keys()
-        correct_param_names = self.get_param_names()
-        if not param_dict_keys == correct_param_names:
-            raise ConstructorParamsError(correct_param_names, param_dict_keys)
         self.params = param_dict
         self.groups = groups
 
@@ -71,6 +69,9 @@ class AbstractConstraint(object):
         """
         Verifies constraint for given params and groups contents.
 
+        :param param_dict: dict of additional params of constraint
+        :param groups: list of groups contents,
+
         For LogReader and Teacher verification.
         """
         raise NotImplementedError("Subclass should implement this")
@@ -100,17 +101,18 @@ class TimeConstraint(AbstractConstraint):
         )
         """
         super(TimeConstraint, self).__init__(param_dict, groups)
+        self._check_params()
 
-    def convert_to_user_constraint_intent(self):
-        return super(TimeConstraint, self).convert_to_user_constraint_intent()
+    def _check_params(self):
+        param_names = self.params.keys()
+        if (
+            self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names
+        ) or self.GROUP_LATER not in param_names or self.GROUP_EARLIER not in param_names:
+            raise ConstructorParamsError(self.TYPE, self.get_param_names(), param_names)
 
     @classmethod
     def get_param_names(cls):
         return [cls.GROUP_EARLIER, cls.GROUP_LATER, cls.MIN_DELTA, cls.MAX_DELTA]
-
-    @classmethod
-    def get_groups_count(cls):
-        return super(TimeConstraint, cls).get_groups_count()
 
     @classmethod
     def verify(cls, param_dict, group_contents):
@@ -138,26 +140,26 @@ class IdenticalConstraint(AbstractConstraint):
         """
         super(IdenticalConstraint, self).__init__(param_dict, groups)
 
-    def convert_to_user_constraint_intent(self):
-        return super(IdenticalConstraint, self).convert_to_user_constraint_intent()
+    def _check_params(self):
+        if len(self.groups) < self.MIN_GROUPS_COUNT:
+            raise ConstructorGroupsError(
+                self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
+            )
 
     @classmethod
     def get_param_names(cls):
         return []
 
     @classmethod
-    def get_groups_count(cls):
-        return super(IdenticalConstraint, cls).get_groups_count()
-
-    @classmethod
     def verify(cls, param_dict, group_contents):
         """
         I.e:
-        - verify({}, ['comp1', 'comp1', 'comp1']) should pass
-        - verify({}, ['comp1', 'hello', 'comp1']) should raise error
+        - verify({}, ['comp1', 'comp1', 'comp1']) returns True
+        - verify({}, ['comp1', 'hello', 'comp1']) returns False
         """
         if not len(set(group_contents)) == 1:
-            raise ConstraintVerificationError(cls.TYPE, param_dict, group_contents)
+            return False
+        return True
 
     # @classmethod
     # def verify(cls, group_contents, param_dict):
