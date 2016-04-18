@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from whylog.constraints import IdenticalConstraint
-from whylog.constraints.exceptions import ConstraintVerificationError
 
 
 class TestIdenticalConstraint(TestCase):
