@@ -71,6 +71,7 @@ class AbstractConstraint(object):
         :param groups: list of groups contents,
 
         For LogReader and Teacher verification.
+        It must be optimized as well as possible (for LogReader).
         """
         raise NotImplementedError("Subclass should implement this")
 
@@ -155,10 +156,13 @@ class IdenticalConstraint(AbstractConstraint):
         - verify({}, ['comp1', 'comp1', 'comp1']) returns True
         - verify({}, ['comp1', 'hello', 'comp1']) returns False
         """
-        if not len(set(group_contents)) == 1:
+        if len(group_contents) < 2:
             return False
+        first_group_content = group_contents[0]
+        for group_content in group_contents:
+            if not first_group_content == group_content:
+                return False
         return True
-
 
 class DifferentValueConstraint(AbstractConstraint):
     """
