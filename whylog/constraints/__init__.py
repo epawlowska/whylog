@@ -164,6 +164,7 @@ class IdenticalConstraint(AbstractConstraint):
                 return False
         return True
 
+
 class DifferentValueConstraint(AbstractConstraint):
     """
     Contents of groups must be different.
