@@ -65,7 +65,7 @@ class AbstractConstraint(object):
     @classmethod
     def verify(cls, param_dict, group_contents):
         """
-        Verifies constraint for given params and groups contents.
+        Verifies constraint for given params in param_dict and groups contents.
 
         :param param_dict: dict of additional params of constraint
         :param groups: list of groups contents,
