@@ -26,7 +26,8 @@ class AbstractConstraint(object):
         For Teacher and Front use while creating user rule.
 
         :param param_dict: dict of additional params of constraint
-        :param groups: list of tuples (line_id, group_no),
+        :param groups: all groups that are linked by constraint,
+                       represented by list of tuples (line_id, group_no),
                        where line_id and group_no is inner numeration between Front and Teacher
         """
         self.params = param_dict
@@ -56,7 +57,6 @@ class AbstractConstraint(object):
         Returns minimal and maximal count of groups needed to create constraint.
 
         For Front to ask user for proper count of groups.
-        0, 0 - no groups
         2, None - at least 2 groups
         2, 2 - exactly 2 groups
         """
@@ -83,20 +83,20 @@ class TimeConstraint(AbstractConstraint):
 
     TYPE = ConstraintType.TIME_DELTA
 
-    MIN_GROUPS_COUNT = 0
-    MAX_GROUPS_COUNT = 0
+    MIN_GROUPS_COUNT = 2
+    MAX_GROUPS_COUNT = 2
 
-    GROUP_EARLIER = 'group_earlier'
-    GROUP_LATER = 'group_later'
     MIN_DELTA = 'min_delta'
     MAX_DELTA = 'max_delta'
 
     def __init__(self, param_dict, groups):
         """
+        :param groups: First element of groups is a group with earlier date.
+
         I.e:
         TimeConstraint(
-            {'group_earlier': (3, 1), 'group_later': (4, 2), 'min_delta': 12, 'max_delta' 30},
-            list()
+            {'min_delta': 12, 'max_delta' 30},
+            [(0, 1), (2, 1)]
         )
         """
         super(TimeConstraint, self).__init__(param_dict, groups)
@@ -104,14 +104,16 @@ class TimeConstraint(AbstractConstraint):
 
     def _check_params(self):
         param_names = self.params.keys()
-        if (
-            self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names
-        ) or self.GROUP_LATER not in param_names or self.GROUP_EARLIER not in param_names:
+        if self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names:
             raise ConstructorParamsError(self.TYPE, self.get_param_names(), param_names)
+        if not len(self.groups) == 2:
+            raise ConstructorGroupsError(
+                self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
+            )
 
     @classmethod
     def get_param_names(cls):
-        return [cls.GROUP_EARLIER, cls.GROUP_LATER, cls.MIN_DELTA, cls.MAX_DELTA]
+        return [cls.MIN_DELTA, cls.MAX_DELTA]
 
     @classmethod
     def verify(cls, param_dict, group_contents):
