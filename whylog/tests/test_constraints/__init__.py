@@ -47,3 +47,9 @@ class TestTimeConstraint(TestCase):
         insufficient_params = dict()
         self.assertRaises(ConstructorParamsError, TimeConstraint, insufficient_params, groups)
 
+    def test_get_param_names(self):
+        assert set(TimeConstraint.get_param_names()) == \
+               set([TimeConstraint.MIN_DELTA, TimeConstraint.MAX_DELTA])
+
+    def test_get_group_count(self):
+        assert TimeConstraint.get_groups_count() == (2, 2)
