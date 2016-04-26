@@ -15,8 +15,11 @@ class AbstractConstraint(object):
     """
 
     TYPE = 'undefined'
+
     MIN_GROUPS_COUNT = None
     MAX_GROUPS_COUNT = None
+
+    PARAMS = []
 
     @abstractmethod
     def __init__(self, param_dict, groups):
@@ -32,6 +35,15 @@ class AbstractConstraint(object):
         """
         self.params = param_dict
         self.groups = groups
+        self._check_params()
+
+    def _check_params(self):
+        groups_count = len(self.groups)
+        if (self.MIN_GROUPS_COUNT is not None and groups_count < self.MIN_GROUPS_COUNT)\
+                or (self.MAX_GROUPS_COUNT is not None and groups_count > self.MIN_GROUPS_COUNT):
+            raise ConstructorGroupsError(
+                self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
+            )
 
     def convert_to_user_constraint_intent(self):
         """
@@ -48,7 +60,7 @@ class AbstractConstraint(object):
 
         For Front to display param names to user and then ask user for param contents.
         """
-        raise NotImplementedError("Subclass should implement this")
+        return cls.PARAMS
 
     @classmethod
     def get_groups_count(cls):
@@ -72,6 +84,7 @@ class AbstractConstraint(object):
         For LogReader and Teacher verification.
         It must be optimized as well as possible (for LogReader).
         """
+
         raise NotImplementedError("Subclass should implement this")
 
 
@@ -88,6 +101,8 @@ class TimeConstraint(AbstractConstraint):
     MIN_DELTA = 'min_delta'
     MAX_DELTA = 'max_delta'
 
+    PARAMS = [MIN_DELTA, MAX_DELTA]
+
     def __init__(self, param_dict, groups):
         """
         :param groups: First element of groups is a group with earlier date.
@@ -99,20 +114,12 @@ class TimeConstraint(AbstractConstraint):
         )
         """
         super(TimeConstraint, self).__init__(param_dict, groups)
-        self._check_params()
 
     def _check_params(self):
+        super(TimeConstraint, self)._check_params()
         param_names = self.params.keys()
         if self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names:
             raise ConstructorParamsError(self.TYPE, self.get_param_names(), param_names)
-        if not len(self.groups) == 2:
-            raise ConstructorGroupsError(
-                self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
-            )
-
-    @classmethod
-    def get_param_names(cls):
-        return [cls.MIN_DELTA, cls.MAX_DELTA]
 
     @classmethod
     def verify(cls, param_dict, group_contents):
@@ -130,6 +137,8 @@ class IdenticalConstraint(AbstractConstraint):
     MIN_GROUPS_COUNT = 2
     MAX_GROUPS_COUNT = None
 
+    PARAMS = []
+
     def __init__(self, param_dict, groups):
         """
         I.e:
@@ -139,16 +148,6 @@ class IdenticalConstraint(AbstractConstraint):
         )
         """
         super(IdenticalConstraint, self).__init__(param_dict, groups)
-
-    def _check_params(self):
-        if len(self.groups) < self.MIN_GROUPS_COUNT:
-            raise ConstructorGroupsError(
-                self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
-            )
-
-    @classmethod
-    def get_param_names(cls):
-        return []
 
     @classmethod
     def verify(cls, param_dict, group_contents):
