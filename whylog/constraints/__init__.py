@@ -24,8 +24,6 @@ class AbstractConstraint(object):
     @abstractmethod
     def __init__(self, param_dict, groups):
         """
-        Creates constraint object.
-
         For Teacher and Front use while creating user rule.
 
         :param param_dict: dict of additional params of constraint
@@ -40,7 +38,7 @@ class AbstractConstraint(object):
     def _check_params(self):
         groups_count = len(self.groups)
         if (self.MIN_GROUPS_COUNT is not None and groups_count < self.MIN_GROUPS_COUNT)\
-                or (self.MAX_GROUPS_COUNT is not None and groups_count > self.MIN_GROUPS_COUNT):
+                or (self.MAX_GROUPS_COUNT is not None and groups_count > self.MAX_GROUPS_COUNT):
             raise ConstructorGroupsError(
                 self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
             )
