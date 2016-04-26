@@ -33,7 +33,6 @@ class AbstractConstraint(object):
         self.params = param_dict
         self.groups = groups
 
-    @abstractmethod
     def convert_to_user_constraint_intent(self):
         """
         Converts constraint to UserConstraintIntent object.
