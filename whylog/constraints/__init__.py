@@ -22,7 +22,7 @@ class AbstractConstraint(object):
     PARAMS = []
 
     @abstractmethod
-    def __init__(self, param_dict, groups):
+    def __init__(self, groups, param_dict):
         """
         For Teacher and Front use while creating user rule.
 
@@ -101,23 +101,25 @@ class TimeConstraint(AbstractConstraint):
 
     PARAMS = [MIN_DELTA, MAX_DELTA]
 
-    def __init__(self, param_dict, groups):
+    def __init__(self, groups, param_dict):
         """
         :param groups: First element of groups is a group with earlier date.
 
         I.e:
         TimeConstraint(
-            {'min_delta': 12, 'max_delta' 30},
             [(0, 1), (2, 1)]
+            {'min_delta': 12, 'max_delta' 30},
         )
         """
-        super(TimeConstraint, self).__init__(param_dict, groups)
+        super(TimeConstraint, self).__init__(groups, param_dict)
 
     def _check_params(self):
         super(TimeConstraint, self)._check_params()
-        param_names = self.params.keys()
-        if self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names:
-            raise ConstructorParamsError(self.TYPE, self.get_param_names(), param_names)
+        param_names = set(self.params.keys())
+        correct_param_names = set(self.get_param_names())
+        if (self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names)\
+                or param_names - correct_param_names:
+            raise ConstructorParamsError(self.TYPE, correct_param_names, param_names)
 
     @classmethod
     def verify(cls, param_dict, group_contents):
@@ -137,15 +139,19 @@ class IdenticalConstraint(AbstractConstraint):
 
     PARAMS = []
 
-    def __init__(self, param_dict, groups):
+    def __init__(self, groups, param_dict=None):
         """
         I.e:
         IdenticalConstraint(
-            dict(),
             [(1, 2), (2, 4)]
         )
         """
-        super(IdenticalConstraint, self).__init__(param_dict, groups)
+        super(IdenticalConstraint, self).__init__(groups, param_dict)
+
+    def _check_params(self):
+        super(IdenticalConstraint, self)._check_params()
+        if self.params:
+            raise ConstructorParamsError(self.TYPE, self.get_param_names(), self.params.keys())
 
     @classmethod
     def verify(cls, param_dict, group_contents):
