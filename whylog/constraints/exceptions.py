@@ -23,9 +23,8 @@ class ConstructorParamsError(ConstraintError):
         self.incorrect_params_names = incorrect_param_names
 
     def __str__(self):
-        return 'Incorrect keys in constructor params dict in constraint: %s, actual keys: %s, should be: %s' % (
-            self.constraint_type, self.incorrect_params_names.keys(),
-            self.correct_params_names.keys()
+        return 'Wrong params names in constraint constructor: %s, actual names: %s, should be: %s' % (
+            self.constraint_type, self.incorrect_params_names, self.correct_params_names
         )
 
 
@@ -37,7 +36,7 @@ class ConstructorGroupsError(ConstraintError):
         self.maximal_groups_count = maximal_groups_count
 
     def __str__(self):
-        return 'Incorrect groups count in constraint: %s, has %s groups, should be at least: %s, at most %s' % (
+        return 'Wrong groups count in constraint: %s, has %s groups, should be at least: %s, at most %s' % (
             self.constraint_type, self.groups_count, self.minimal_groups_count,
             self.maximal_groups_count
         )
