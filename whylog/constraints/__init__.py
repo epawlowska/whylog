@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 import six
 
 from whylog.constraints.const import ConstraintType
-from whylog.constraints.exceptions import ConstructorGroupsError, ConstructorParamsError
+from whylog.constraints.exceptions import ConstructorGroupsCountError, ConstructorParamsError
 from whylog.teacher.user_intent import UserConstraintIntent
 
 
@@ -33,15 +33,20 @@ class AbstractConstraint(object):
         """
         self.params = param_dict
         self.groups = groups
-        self._check_params()
+        self._check_constructor_groups()
+        self._check_constructor_params()
 
-    def _check_params(self):
+    def _check_constructor_groups(self):
         groups_count = len(self.groups)
         if (self.MIN_GROUPS_COUNT is not None and groups_count < self.MIN_GROUPS_COUNT)\
                 or (self.MAX_GROUPS_COUNT is not None and groups_count > self.MAX_GROUPS_COUNT):
-            raise ConstructorGroupsError(
+            raise ConstructorGroupsCountError(
                 self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
             )
+
+    @abstractmethod
+    def _check_constructor_params(self):
+        raise NotImplementedError("Subclass should implement this")
 
     def convert_to_user_constraint_intent(self):
         """
@@ -113,8 +118,7 @@ class TimeConstraint(AbstractConstraint):
         """
         super(TimeConstraint, self).__init__(groups, param_dict)
 
-    def _check_params(self):
-        super(TimeConstraint, self)._check_params()
+    def _check_constructor_params(self):
         param_names = set(self.params.keys())
         correct_param_names = set(self.get_param_names())
         if (self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names)\
@@ -148,8 +152,7 @@ class IdenticalConstraint(AbstractConstraint):
         """
         super(IdenticalConstraint, self).__init__(groups, param_dict)
 
-    def _check_params(self):
-        super(IdenticalConstraint, self)._check_params()
+    def _check_constructor_params(self):
         if self.params:
             raise ConstructorParamsError(self.TYPE, self.get_param_names(), self.params.keys())
 
