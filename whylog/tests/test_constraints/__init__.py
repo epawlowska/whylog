@@ -37,14 +37,16 @@ class TestIdenticalConstraint(TestCase):
 
 
 class TestTimeConstraint(TestCase):
-
     def setUp(self):
         self.min_delta = timedelta(seconds=1)
         self.max_delta = timedelta(seconds=10)
 
     def test_constructor_success(self):
         groups = [(0, 1), (2, 1)]
-        params_full = {TimeConstraint.MIN_DELTA: self.min_delta, TimeConstraint.MAX_DELTA: self.max_delta}
+        params_full = {
+            TimeConstraint.MIN_DELTA: self.min_delta,
+            TimeConstraint.MAX_DELTA: self.max_delta
+        }
         TimeConstraint(groups, params_full)
 
         params_only_min_delta = {TimeConstraint.MIN_DELTA: self.min_delta}
