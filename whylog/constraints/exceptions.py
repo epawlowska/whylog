@@ -28,7 +28,7 @@ class ConstructorParamsError(ConstraintError):
         )
 
 
-class ConstructorGroupsError(ConstraintError):
+class ConstructorGroupsCountError(ConstraintError):
     def __init__(self, constraint_type, groups_count, minimal_groups_count, maximal_groups_count):
         self.constraint_type = constraint_type
         self.groups_count = groups_count

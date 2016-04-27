@@ -1,18 +1,18 @@
 from unittest import TestCase
 
 from whylog.constraints import IdenticalConstraint, TimeConstraint
-from whylog.constraints.exceptions import ConstructorGroupsError, ConstructorParamsError
+from whylog.constraints.exceptions import ConstructorGroupsCountError, ConstructorParamsError
 
 
 class TestIdenticalConstraint(TestCase):
     def test_constructor_success(self):
         groups = [(0, 1), (2, 1), (2, 4)]
         IdenticalConstraint(groups)
-        IdenticalConstraint(groups, dict())
+        IdenticalConstraint(groups, {})
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
-        self.assertRaises(ConstructorGroupsError, IdenticalConstraint, insufficient_groups)
+        self.assertRaises(ConstructorGroupsCountError, IdenticalConstraint, insufficient_groups)
 
     def test_constructor_not_empty_params(self):
         self.assertRaises(
@@ -37,23 +37,23 @@ class TestIdenticalConstraint(TestCase):
 class TestTimeConstraint(TestCase):
     def test_constructor_success(self):
         groups = [(0, 1), (2, 1)]
-        params_full = dict([(TimeConstraint.MIN_DELTA, 1), (TimeConstraint.MAX_DELTA, 42)])
+        params_full = {TimeConstraint.MIN_DELTA: 1, TimeConstraint.MAX_DELTA: 42}
         TimeConstraint(groups, params_full)
 
-        params_only_min_delta = dict([(TimeConstraint.MIN_DELTA, 1)])
+        params_only_min_delta = {TimeConstraint.MIN_DELTA: 1}
         TimeConstraint(groups, params_only_min_delta)
 
-        params_only_max_delta = dict([(TimeConstraint.MAX_DELTA, 1)])
+        params_only_max_delta = {TimeConstraint.MAX_DELTA: 1}
         TimeConstraint(groups, params_only_max_delta)
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
-        params = dict([(TimeConstraint.MIN_DELTA, 1)])
-        self.assertRaises(ConstructorGroupsError, TimeConstraint, insufficient_groups, params)
+        params = {TimeConstraint.MIN_DELTA: 1}
+        self.assertRaises(ConstructorGroupsCountError, TimeConstraint, insufficient_groups, params)
 
     def test_constructor_wrong_params(self):
         groups = [(0, 1), (2, 1)]
-        no_params = dict()
+        no_params = {}
         self.assertRaises(ConstructorParamsError, TimeConstraint, groups, no_params)
 
         wrong_params = {"sth": 1}
