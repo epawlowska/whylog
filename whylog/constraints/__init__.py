@@ -22,7 +22,7 @@ class AbstractConstraint(object):
     PARAMS = []
 
     @abstractmethod
-    def __init__(self, groups, param_dict):
+    def __init__(self, groups, param_dict=None):
         """
         For Teacher and Front use while creating user rule.
 
@@ -31,7 +31,7 @@ class AbstractConstraint(object):
                        represented by list of tuples (line_id, group_no),
                        where line_id and group_no is inner numeration between Front and Teacher
         """
-        self.params = param_dict
+        self.params = param_dict or {}
         self.groups = groups
         self._check_constructor_groups()
         self._check_constructor_params()
@@ -77,7 +77,7 @@ class AbstractConstraint(object):
         return cls.MIN_GROUPS_COUNT, cls.MAX_GROUPS_COUNT
 
     @classmethod
-    def verify(cls, param_dict, group_contents):
+    def verify(cls, group_contents, param_dict):
         """
         Verifies constraint for given params in param_dict and groups contents.
 
@@ -113,7 +113,7 @@ class TimeConstraint(AbstractConstraint):
         I.e:
         TimeConstraint(
             [(0, 1), (2, 1)]
-            {'min_delta': 12, 'max_delta' 30},
+            {'min_delta': datetime.timedelta(seconds=1), 'max_delta': datetime.timedelta(seconds=10)},
         )
         """
         super(TimeConstraint, self).__init__(groups, param_dict)
@@ -126,7 +126,7 @@ class TimeConstraint(AbstractConstraint):
             raise ConstructorParamsError(self.TYPE, correct_param_names, param_names)
 
     @classmethod
-    def verify(cls, param_dict, group_contents):
+    def verify(cls, group_contents, param_dict):
         #TODO
         raise NotImplementedError
 
@@ -157,7 +157,7 @@ class IdenticalConstraint(AbstractConstraint):
             raise ConstructorParamsError(self.TYPE, self.get_param_names(), self.params.keys())
 
     @classmethod
-    def verify(cls, param_dict, group_contents):
+    def verify(cls, group_contents, param_dict=None):
         """
         I.e:
         - verify({}, ['comp1', 'comp1', 'comp1']) returns True

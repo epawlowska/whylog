@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from unittest import TestCase
 
 from whylog.constraints import IdenticalConstraint, TimeConstraint
@@ -28,27 +30,32 @@ class TestIdenticalConstraint(TestCase):
         assert IdenticalConstraint.get_groups_count() == (2, None)
 
     def test_verify_success(self):
-        assert IdenticalConstraint.verify({}, ['comp1', 'comp1', 'comp1'])
+        assert IdenticalConstraint.verify(['comp1', 'comp1', 'comp1'])
 
     def test_verify_fail(self):
-        assert not IdenticalConstraint.verify({}, ['comp1', 'hello', 'comp1'])
+        assert not IdenticalConstraint.verify(['comp1', 'hello', 'comp1'])
 
 
 class TestTimeConstraint(TestCase):
+
+    def setUp(self):
+        self.min_delta = timedelta(seconds=1)
+        self.max_delta = timedelta(seconds=10)
+
     def test_constructor_success(self):
         groups = [(0, 1), (2, 1)]
-        params_full = {TimeConstraint.MIN_DELTA: 1, TimeConstraint.MAX_DELTA: 42}
+        params_full = {TimeConstraint.MIN_DELTA: self.min_delta, TimeConstraint.MAX_DELTA: self.max_delta}
         TimeConstraint(groups, params_full)
 
-        params_only_min_delta = {TimeConstraint.MIN_DELTA: 1}
+        params_only_min_delta = {TimeConstraint.MIN_DELTA: self.min_delta}
         TimeConstraint(groups, params_only_min_delta)
 
-        params_only_max_delta = {TimeConstraint.MAX_DELTA: 1}
+        params_only_max_delta = {TimeConstraint.MAX_DELTA: self.max_delta}
         TimeConstraint(groups, params_only_max_delta)
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
-        params = {TimeConstraint.MIN_DELTA: 1}
+        params = {TimeConstraint.MIN_DELTA: self.min_delta}
         self.assertRaises(ConstructorGroupsCountError, TimeConstraint, insufficient_groups, params)
 
     def test_constructor_wrong_params(self):
