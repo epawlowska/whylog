@@ -1,9 +1,11 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 import six
 
 from whylog.constraints.const import ConstraintType
-from whylog.constraints.exceptions import ConstructorGroupsCountError, ConstructorParamsError
+from whylog.constraints.exceptions import (
+    ConstructorGroupsCountError, ConstructorParamsError, VerificatedParamsError
+)
 from whylog.teacher.user_intent import UserConstraintIntent
 
 
@@ -14,12 +16,21 @@ class AbstractConstraint(object):
     :param MAX_GROUPS_COUNT: maximal groups count needed to create constraint
     """
 
-    TYPE = 'undefined'
+    @abstractproperty
+    def TYPE(self):
+        raise NotImplementedError
 
-    MIN_GROUPS_COUNT = None
-    MAX_GROUPS_COUNT = None
+    @abstractproperty
+    def MIN_GROUPS_COUNT(self):
+        raise NotImplementedError
 
-    PARAMS = []
+    @abstractproperty
+    def MAX_GROUPS_COUNT(self):
+        raise NotImplementedError
+
+    @abstractproperty
+    def PARAMS(self):
+        raise NotImplementedError
 
     @abstractmethod
     def __init__(self, groups, param_dict=None):
@@ -46,7 +57,7 @@ class AbstractConstraint(object):
 
     @abstractmethod
     def _check_constructor_params(self):
-        raise NotImplementedError("Subclass should implement this")
+        pass
 
     def convert_to_user_constraint_intent(self):
         """
@@ -76,7 +87,6 @@ class AbstractConstraint(object):
         """
         return cls.MIN_GROUPS_COUNT, cls.MAX_GROUPS_COUNT
 
-    @classmethod
     def verify(cls, group_contents, param_dict):
         """
         Verifies constraint for given params in param_dict and groups contents.
@@ -88,7 +98,7 @@ class AbstractConstraint(object):
         It must be optimized as well as possible (for LogReader).
         """
 
-        raise NotImplementedError("Subclass should implement this")
+        pass
 
 
 class TimeConstraint(AbstractConstraint):
@@ -104,7 +114,7 @@ class TimeConstraint(AbstractConstraint):
     MIN_DELTA = 'min_delta'
     MAX_DELTA = 'max_delta'
 
-    PARAMS = [MIN_DELTA, MAX_DELTA]
+    PARAMS = sorted([MIN_DELTA, MAX_DELTA])
 
     def __init__(self, groups, param_dict):
         """
@@ -164,7 +174,7 @@ class IdenticalConstraint(AbstractConstraint):
         - verify({}, ['comp1', 'hello', 'comp1']) returns False
         """
         if len(group_contents) < 2:
-            return False
+            raise VerificatedParamsError(cls.TYPE, group_contents)
         first_group_content = group_contents[0]
         for group_content in group_contents:
             if not first_group_content == group_content:
