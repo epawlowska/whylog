@@ -3,14 +3,19 @@ from datetime import timedelta
 from unittest import TestCase
 
 from whylog.constraints import IdenticalConstraint, TimeConstraint
-from whylog.constraints.exceptions import ConstructorGroupsCountError, ConstructorParamsError
+from whylog.constraints.exceptions import (
+    ConstructorError, ConstructorGroupsCountError, ConstructorParamsError
+)
 
 
 class TestIdenticalConstraint(TestCase):
     def test_constructor_success(self):
         groups = [(0, 1), (2, 1), (2, 4)]
-        IdenticalConstraint(groups)
-        IdenticalConstraint(groups, {})
+        try:
+            IdenticalConstraint(groups)
+            IdenticalConstraint(groups, {})
+        except ConstructorError as e:
+            self.failed("Exception shouldn't be raised, e: %s" % (e,))
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
@@ -42,18 +47,21 @@ class TestTimeConstraint(TestCase):
         self.max_delta = timedelta(seconds=10)
 
     def test_constructor_success(self):
-        groups = [(0, 1), (2, 1)]
-        params_full = {
-            TimeConstraint.MIN_DELTA: self.min_delta,
-            TimeConstraint.MAX_DELTA: self.max_delta
-        }
-        TimeConstraint(groups, params_full)
+        try:
+            groups = [(0, 1), (2, 1)]
+            params_full = {
+                TimeConstraint.MIN_DELTA: self.min_delta,
+                TimeConstraint.MAX_DELTA: self.max_delta
+            }
+            TimeConstraint(groups, params_full)
 
-        params_only_min_delta = {TimeConstraint.MIN_DELTA: self.min_delta}
-        TimeConstraint(groups, params_only_min_delta)
+            params_only_min_delta = {TimeConstraint.MIN_DELTA: self.min_delta}
+            TimeConstraint(groups, params_only_min_delta)
 
-        params_only_max_delta = {TimeConstraint.MAX_DELTA: self.max_delta}
-        TimeConstraint(groups, params_only_max_delta)
+            params_only_max_delta = {TimeConstraint.MAX_DELTA: self.max_delta}
+            TimeConstraint(groups, params_only_max_delta)
+        except ConstructorError as e:
+            self.failed("Exception shouldn't be raised, e: %s" % (e,))
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
@@ -70,10 +78,6 @@ class TestTimeConstraint(TestCase):
 
         mixed_params = {TimeConstraint.MIN_DELTA: 33, "sth": 1}
         self.assertRaises(ConstructorParamsError, TimeConstraint, groups, mixed_params)
-
-    def test_get_param_names(self):
-        assert set(TimeConstraint.get_param_names()) == \
-               set([TimeConstraint.MIN_DELTA, TimeConstraint.MAX_DELTA])
 
     def test_get_group_count(self):
         assert TimeConstraint.get_groups_count() == (2, 2)
