@@ -16,11 +16,7 @@ class ConstraintError(WhylogError):
     pass
 
 
-class ConstructorError(ConstraintError):
-    pass
-
-
-class ConstructorParamsError(ConstructorError):
+class ConstructorParamsError(ConstraintError):
     def __init__(self, constraint_type, correct_param_names, incorrect_param_names):
         self.constraint_type = constraint_type
         self.correct_params_names = correct_param_names
@@ -32,7 +28,7 @@ class ConstructorParamsError(ConstructorError):
         )
 
 
-class ConstructorGroupsCountError(ConstructorError):
+class ConstructorGroupsCountError(ConstraintError):
     def __init__(self, constraint_type, groups_count, minimal_groups_count, maximal_groups_count):
         self.constraint_type = constraint_type
         self.groups_count = groups_count
