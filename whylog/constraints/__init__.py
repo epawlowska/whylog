@@ -137,8 +137,15 @@ class TimeConstraint(AbstractConstraint):
 
     @classmethod
     def verify(cls, group_contents, param_dict):
-        #TODO
-        raise NotImplementedError
+        lower_date, greater_date = group_contents
+        actual_delta = greater_date - lower_date
+        param_min_delta = param_dict[cls.MIN_DELTA]
+        param_max_delta = param_dict[cls.MAX_DELTA]
+        if param_min_delta is not None and actual_delta < param_min_delta:
+            return False
+        if param_max_delta is not None and actual_delta > param_max_delta:
+            return False
+        return True
 
 
 class IdenticalConstraint(AbstractConstraint):
