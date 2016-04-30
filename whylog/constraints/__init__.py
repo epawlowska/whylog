@@ -42,8 +42,8 @@ class AbstractConstraint(object):
                        represented by list of tuples (line_id, group_no),
                        where line_id and group_no is inner numeration between Front and Teacher
         """
-        self.params = param_dict or {}
         self.groups = groups
+        self.params = param_dict or {}
         self._check_constructor_groups()
         self._check_constructor_params()
 
@@ -55,8 +55,21 @@ class AbstractConstraint(object):
                 self.TYPE, len(self.groups), self.MIN_GROUPS_COUNT, self.MAX_GROUPS_COUNT
             )
 
-    @abstractmethod
     def _check_constructor_params(self):
+        correct_param_names = set(self.get_param_names())
+        actual_param_names = set(self.params.keys())
+        self._check_useless_params(correct_param_names, actual_param_names)
+        self._check_mandatory_params(correct_param_names, actual_param_names)
+        self._check_optional_params(correct_param_names, actual_param_names)
+
+    def _check_useless_params(self, correct_param_names, actual_param_names):
+        if actual_param_names - correct_param_names:
+            raise ConstructorParamsError(self.TYPE, correct_param_names, actual_param_names)
+
+    def _check_mandatory_params(self, correct_param_names, actual_param_names):
+        pass
+
+    def _check_optional_params(self, correct_param_names, actual_param_names):
         pass
 
     def convert_to_user_constraint_intent(self):
@@ -128,12 +141,9 @@ class TimeConstraint(AbstractConstraint):
         """
         super(TimeConstraint, self).__init__(groups, param_dict)
 
-    def _check_constructor_params(self):
-        param_names = set(self.params.keys())
-        correct_param_names = set(self.get_param_names())
-        if (self.MIN_DELTA not in param_names and self.MAX_DELTA not in param_names)\
-                or param_names - correct_param_names:
-            raise ConstructorParamsError(self.TYPE, correct_param_names, param_names)
+    def _check_optional_params(self, correct_param_names, actual_param_names):
+        if self.MIN_DELTA not in actual_param_names and self.MAX_DELTA not in actual_param_names:
+            raise ConstructorParamsError(self.TYPE, correct_param_names, actual_param_names)
 
     @classmethod
     def verify(cls, group_contents, param_dict):
@@ -168,10 +178,6 @@ class IdenticalConstraint(AbstractConstraint):
         )
         """
         super(IdenticalConstraint, self).__init__(groups, param_dict)
-
-    def _check_constructor_params(self):
-        if self.params:
-            raise ConstructorParamsError(self.TYPE, self.get_param_names(), self.params.keys())
 
     @classmethod
     def verify(cls, group_contents, param_dict=None):
