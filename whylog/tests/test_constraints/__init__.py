@@ -1,5 +1,4 @@
-from datetime import timedelta
-
+from datetime import datetime, timedelta
 from unittest import TestCase
 
 from whylog.constraints import IdenticalConstraint, TimeConstraint
@@ -35,6 +34,8 @@ class TestTimeConstraint(TestCase):
     def setUp(self):
         self.min_delta = timedelta(seconds=1)
         self.max_delta = timedelta(seconds=10)
+        self.lower_date = datetime(2016, 5, 19, 8, 35, 1)
+        self.greater_date = datetime(2016, 5, 19, 8, 35, 5)
 
     def test_constructor_insufficient_groups(self):
         insufficient_groups = [(0, 1)]
@@ -54,3 +55,19 @@ class TestTimeConstraint(TestCase):
 
     def test_get_group_count(self):
         assert TimeConstraint.get_groups_count() == (2, 2)
+
+    def test_verify_success(self):
+        assert TimeConstraint.verify(
+            [self.lower_date, self.greater_date], {
+                TimeConstraint.MIN_DELTA: self.min_delta,
+                TimeConstraint.MAX_DELTA: self.max_delta
+            }
+        )
+
+    def test_verify_fail(self):
+        assert not TimeConstraint.verify(
+            [self.greater_date, self.lower_date], {
+                TimeConstraint.MIN_DELTA: self.min_delta,
+                TimeConstraint.MAX_DELTA: self.max_delta
+            }
+        )
