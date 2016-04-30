@@ -18,19 +18,19 @@ class AbstractConstraint(object):
 
     @abstractproperty
     def TYPE(self):
-        raise NotImplementedError
+        pass
 
     @abstractproperty
     def MIN_GROUPS_COUNT(self):
-        raise NotImplementedError
+        return None
 
     @abstractproperty
     def MAX_GROUPS_COUNT(self):
-        raise NotImplementedError
+        return None
 
     @abstractproperty
     def PARAMS(self):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def __init__(self, groups, param_dict=None):
@@ -100,6 +100,7 @@ class AbstractConstraint(object):
         """
         return cls.MIN_GROUPS_COUNT, cls.MAX_GROUPS_COUNT
 
+    @abstractmethod
     def verify(cls, group_contents, param_dict):
         """
         Verifies constraint for given params in param_dict and groups contents.
@@ -116,7 +117,8 @@ class AbstractConstraint(object):
 
 class TimeConstraint(AbstractConstraint):
     """
-    Time delta between two dates must be greater than 'max_delta' and lower than 'min_delta'
+    Time delta between two dates must be greater or equal to 'min_delta'
+    and lower or equal to 'max_delta'
     """
 
     TYPE = ConstraintType.TIME_DELTA
@@ -186,8 +188,6 @@ class IdenticalConstraint(AbstractConstraint):
         - verify({}, ['comp1', 'comp1', 'comp1']) returns True
         - verify({}, ['comp1', 'hello', 'comp1']) returns False
         """
-        if len(group_contents) < 2:
-            raise VerificatedParamsError(cls.TYPE, group_contents)
         first_group_content = group_contents[0]
         for group_content in group_contents:
             if not first_group_content == group_content:
