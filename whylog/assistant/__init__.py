@@ -5,6 +5,8 @@ import six
 
 @six.add_metaclass(ABCMeta)
 class AbstractAssistant(object):
+    TYPE = None
+
     @abstractmethod
     def add_line(self, line_id, line_object):
         pass
