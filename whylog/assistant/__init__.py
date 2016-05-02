@@ -1,11 +1,13 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 import six
 
 
 @six.add_metaclass(ABCMeta)
 class AbstractAssistant(object):
-    TYPE = None
+    @abstractproperty
+    def TYPE(self):
+        return None
 
     @abstractmethod
     def add_line(self, line_id, line_object):
