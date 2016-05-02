@@ -21,6 +21,7 @@ class TeacherParser(object):
     """
     :type line: FrontInput
     """
+
     def __init__(self, line_object, name, primary_keys, log_type):
         self.line = line_object
         self.name = name
@@ -72,12 +73,10 @@ class Teacher(object):
         default_groups = default_pattern_match.param_groups
 
         default_name = self.config.propose_parser_name(
-            line_object.line_content,
-            default_pattern,
-            self.names_blacklist
+            line_object.line_content, default_pattern, self.names_blacklist
         )
         defaulf_primary_key = [min(default_groups.keys())] if default_groups else []
-        default_log_type_name = None #TODO: What should be defauld log_type_name?
+        default_log_type_name = None  #TODO: What should be default log_type_name?
 
         new_teacher_parser = TeacherParser(
             line_object, default_name, defaulf_primary_key, default_log_type_name
@@ -206,14 +205,9 @@ class Teacher(object):
         teacher_parser = self._parsers[line_id]
         pattern_type = self.pattern_assistant.TYPE
         return UserParserIntent(
-            pattern_type,
-            teacher_parser.name,
-            pattern_match.pattern,
-            teacher_parser.log_type,
-            teacher_parser.primary_keys,
-            pattern_match.param_groups,
-            teacher_parser.line.line_content,
-            teacher_parser.line.offset,
+            pattern_type, teacher_parser.name, pattern_match.pattern, teacher_parser.log_type,
+            teacher_parser.primary_keys, pattern_match.param_groups,
+            teacher_parser.line.line_content, teacher_parser.line.offset,
             teacher_parser.line.resource_location
         )
 
