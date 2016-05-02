@@ -231,4 +231,4 @@ class Teacher(object):
         Verifies text patterns and constraints. If they meet all requirements, saves Rule.
         """
         # TODO: remove mock
-        self.config.add_rule(create_sample_rule())
+        self.config.add_rule(self.get_rule())
