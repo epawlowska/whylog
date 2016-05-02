@@ -1,4 +1,5 @@
-from whylog.config import AbstractConfig
+import six
+
 from whylog.teacher.constraint_links_base import ConstraintLinksBase
 from whylog.teacher.mock_outputs import create_sample_rule
 from whylog.teacher.user_intent import UserParserIntent, UserRuleIntent
@@ -94,6 +95,7 @@ class Teacher(object):
 
         self._remove_constraints_by_line(line_id)
         self.pattern_assistant.remove_line(line_id)
+        self.names_blacklist.remove(self._parsers[line_id].name)
         del self._parsers[line_id]
 
     def update_pattern(self, line_id, pattern):
