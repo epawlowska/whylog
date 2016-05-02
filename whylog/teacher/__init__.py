@@ -211,18 +211,20 @@ class Teacher(object):
             teacher_parser.line.resource_location
         )
 
-    def _prepare_rule(self):
-        user_parsers = [self._prepare_user_parser(line_id) for line_id in self._parsers.keys()]
-        user_constraints = [constraint.convert_to_user_constraint_intent
-                            for constraint in self._constraint_base.values()]
-        return UserRuleIntent(self.effect_id, user_parsers, user_constraints)
-
     def get_rule(self):
         """
         Creates rule for Front that will be shown to user
         """
-        # TODO: remove mock
-        return create_sample_rule()
+        user_parsers = dict(
+            [
+                (line_id, self._prepare_user_parser(line_id)) for line_id in self._parsers.keys()
+            ]
+        )
+        user_constraints = [
+            constraint.convert_to_user_constraint_intent()
+            for constraint in self._constraint_base.values()
+        ]
+        return UserRuleIntent(self.effect_id, user_parsers, user_constraints)
 
     def save(self):
         """
