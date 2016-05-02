@@ -68,8 +68,8 @@ class Teacher(object):
         self.pattern_assistant.add_line(line_id, line_object)
 
         default_pattern_match = self.pattern_assistant.get_pattern_match(line_id)
-        default_pattern = default_pattern_match.pattern()
-        default_groups = default_pattern_match.param_groups()
+        default_pattern = default_pattern_match.pattern
+        default_groups = default_pattern_match.param_groups
 
         default_name = self.config.propose_parser_name(
             line_object.line_content,
