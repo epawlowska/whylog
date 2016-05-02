@@ -23,10 +23,10 @@ class RegexMatch():
         self.param_groups = dict()
 
         self.regex = None
-        self.update_by_regex(create_obvious_regex(self.line_text))
-
         self.guessed_pattern_matches = dict()
+
         self._guess_regexes()
+        self.update_by_guessed_regex(0)
 
     def convert_to_pattern_match(self):
         return PatternMatch(self.line_text, self.regex, self.param_groups)
@@ -72,7 +72,6 @@ class RegexMatch():
             ]
         )
         self.guessed_pattern_matches = guessed_dict
-        self.update_by_guessed_regex(regex_id=0)
 
     def set_converter(self, group_no, converter):
         #TODO: verify converter
