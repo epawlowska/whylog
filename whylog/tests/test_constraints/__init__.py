@@ -24,10 +24,12 @@ class TestIdenticalConstraint(TestCase):
         assert IdenticalConstraint.get_groups_count() == (2, None)
 
     def test_verify_success(self):
-        assert IdenticalConstraint.verify(['comp1', 'comp1', 'comp1'])
+        ic = IdenticalConstraint(params_checking=False)
+        assert ic.verify(['comp1', 'comp1', 'comp1'])
 
     def test_verify_fail(self):
-        assert not IdenticalConstraint.verify(['comp1', 'hello', 'comp1'])
+        ic = IdenticalConstraint(params_checking=False)
+        assert not ic.verify(['comp1', 'hello', 'comp1'])
 
 
 class TestTimeConstraint(TestCase):
@@ -57,7 +59,8 @@ class TestTimeConstraint(TestCase):
         assert TimeConstraint.get_groups_count() == (2, 2)
 
     def test_verify_success(self):
-        assert TimeConstraint.verify(
+        tc = TimeConstraint(params_checking=False)
+        assert tc.verify(
             [self.lower_date, self.greater_date], {
                 TimeConstraint.MIN_DELTA: self.min_delta,
                 TimeConstraint.MAX_DELTA: self.max_delta
@@ -65,7 +68,8 @@ class TestTimeConstraint(TestCase):
         )
 
     def test_verify_fail(self):
-        assert not TimeConstraint.verify(
+        tc = TimeConstraint(params_checking=False)
+        assert not tc.verify(
             [self.greater_date, self.lower_date], {
                 TimeConstraint.MIN_DELTA: self.min_delta,
                 TimeConstraint.MAX_DELTA: self.max_delta

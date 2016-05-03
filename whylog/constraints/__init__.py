@@ -31,7 +31,7 @@ class AbstractConstraint(object):
         pass
 
     @abstractmethod
-    def __init__(self, groups, param_dict=None):
+    def __init__(self, groups=None, param_dict=None, params_checking=True):
         """
         For Teacher and Front use while creating user rule.
 
@@ -40,10 +40,11 @@ class AbstractConstraint(object):
                        represented by list of tuples (line_id, group_no),
                        where line_id and group_no is inner numeration between Front and Teacher
         """
-        self.groups = groups
+        self.groups = groups or []
         self.params = param_dict or {}
-        self._check_constructor_groups()
-        self._check_constructor_params()
+        if params_checking:
+            self._check_constructor_groups()
+            self._check_constructor_params()
 
     def _check_constructor_groups(self):
         groups_count = len(self.groups)
@@ -99,7 +100,7 @@ class AbstractConstraint(object):
         return cls.MIN_GROUPS_COUNT, cls.MAX_GROUPS_COUNT
 
     @abstractmethod
-    def verify(cls, group_contents, param_dict):
+    def verify(self, group_contents, param_dict):
         """
         Verifies constraint for given params in param_dict and groups contents.
 
@@ -129,7 +130,7 @@ class TimeConstraint(AbstractConstraint):
 
     PARAMS = sorted([MIN_DELTA, MAX_DELTA])
 
-    def __init__(self, groups, param_dict):
+    def __init__(self, groups=None, param_dict=None, params_checking=True):
         """
         :param groups: First element of groups is a group with earlier date.
 
@@ -139,18 +140,17 @@ class TimeConstraint(AbstractConstraint):
             {'min_delta': datetime.timedelta(seconds=1), 'max_delta': datetime.timedelta(seconds=10)},
         )
         """
-        super(TimeConstraint, self).__init__(groups, param_dict)
+        super(TimeConstraint, self).__init__(groups, param_dict, params_checking)
 
     def _check_optional_params(self, correct_param_names, actual_param_names):
         if self.MIN_DELTA not in actual_param_names and self.MAX_DELTA not in actual_param_names:
             raise ConstructorParamsError(self.TYPE, correct_param_names, actual_param_names)
 
-    @classmethod
-    def verify(cls, group_contents, param_dict):
+    def verify(self, group_contents, param_dict):
         lower_date, greater_date = group_contents
         actual_delta = greater_date - lower_date
-        param_min_delta = param_dict[cls.MIN_DELTA]
-        param_max_delta = param_dict[cls.MAX_DELTA]
+        param_min_delta = param_dict[self.MIN_DELTA]
+        param_max_delta = param_dict[self.MAX_DELTA]
         if param_min_delta is not None and actual_delta < param_min_delta:
             return False
         if param_max_delta is not None and actual_delta > param_max_delta:
@@ -170,17 +170,16 @@ class IdenticalConstraint(AbstractConstraint):
 
     PARAMS = []
 
-    def __init__(self, groups, param_dict=None):
+    def __init__(self, groups=None, param_dict=None, params_checking=True):
         """
         I.e:
         IdenticalConstraint(
             [(1, 2), (2, 4)]
         )
         """
-        super(IdenticalConstraint, self).__init__(groups, param_dict)
+        super(IdenticalConstraint, self).__init__(groups, param_dict, params_checking)
 
-    @classmethod
-    def verify(cls, group_contents, param_dict=None):
+    def verify(self, group_contents, param_dict=None):
         """
         I.e:
         - verify({}, ['comp1', 'comp1', 'comp1']) returns True
