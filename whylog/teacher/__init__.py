@@ -1,6 +1,7 @@
 import six
 
 from whylog.teacher.constraint_links_base import ConstraintLinksBase
+from whylog.teacher.exceptions import NotUniqueParserName
 from whylog.teacher.mock_outputs import create_sample_rule
 from whylog.teacher.user_intent import UserParserIntent, UserRuleIntent
 
@@ -119,7 +120,11 @@ class Teacher(object):
         self.pattern_assistant.update_by_guessed_pattern_match(line_id, pattern_id)
 
     def set_pattern_name(self, line_id, name):
-        pass
+        if self.config.is_free_parser_name(name, self.names_blacklist):
+            self._parsers[line_id].name = name
+            self.names_blacklist.add(name)
+        else:
+            raise NotUniqueParserName(name)
 
     def set_converter(self, pattern_group, converter):
         pass

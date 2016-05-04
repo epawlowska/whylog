@@ -7,6 +7,7 @@ from whylog.config import YamlConfig
 from whylog.constraints import IdenticalConstraint
 from whylog.front.utils import FrontInput
 from whylog.teacher import Teacher
+from whylog.teacher.exceptions import NotUniqueParserName
 from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent
 from whylog.tests.utils import ConfigPathFactory
 
@@ -47,13 +48,13 @@ class TestBasic(TestCase):
         self.cause1_pattern = r'^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}) Data is missing on (.*)$'
         self.teacher.update_pattern(self.cause1_id, self.cause1_pattern)
 
-        cause2_line_content = r'2015-12-03 12:10:50 Data migration to comp21 failed'
+        cause2_line_content = r'2015-12-03 12:10:50 Data migration to comp21 failed in test 123'
         cause2_line_source = None
         cause2_offset = 21
         cause2_front_input = FrontInput(cause2_offset, cause2_line_content, cause2_line_source)
         self.cause2_id = 2
         self.teacher.add_line(self.cause2_id, cause2_front_input)
-        cause2_pattern = r'^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}) Data migration to (.*) failed$'
+        cause2_pattern = r'^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}) Data migration to (.*) failed in test (.*)$'
         self.teacher.update_pattern(self.cause2_id, cause2_pattern)
 
         self.identical_groups = [(self.cause1_id, 2), (self.cause2_id, 2)]
@@ -85,8 +86,18 @@ class TestBasic(TestCase):
             self.effect_front_input.offset,
             self.effect_front_input.line_source,
         )
-
         assert wanted_effect_parser == effect_parser
+
+    def test_setting_parser_name(self):
+        effect_parser_name = self.teacher.get_rule().parsers[self.effect_id].pattern_name
+        new_name = effect_parser_name + '_hello'
+        self.teacher.set_pattern_name(self.effect_id, new_name)
+        rule = self.teacher.get_rule()
+        assert new_name == rule.parsers[self.effect_id].pattern_name
+
+        self.assertRaises(
+            NotUniqueParserName, self.teacher.set_pattern_name, self.cause1_id, new_name
+        )
 
 
 class TestConstraints(TestBasic):
