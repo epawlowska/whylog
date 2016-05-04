@@ -46,7 +46,7 @@ def group_spans_from_regex(regex, text):
         Span(
             start, end, pattern=group_regex
         ) for (start, end), group_regex in zip(group_ranges_in_text, group_regexes)
-    ]
+    ]  # yapf: disable
     return SpanList(group_spans).sort_by_start_and_end()
 
 
