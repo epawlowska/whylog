@@ -27,6 +27,14 @@ class TestBasic(TestCase):
         regex_assistant = RegexAssistant()
         self.teacher = Teacher(yaml_config, regex_assistant)
 
+        line_content = r'2015-12-03 12:11:00 Data is missing on comp21'
+        line_source = None
+        offset = 42
+        self.effect_front_input = FrontInput(offset, line_content, line_source)
+
+        self.effect_line_id = 0
+        self.teacher.add_line(self.effect_line_id, self.effect_front_input, effect=True)
+
     def tearDown(self):
         self._clean_test_files()
 
@@ -35,14 +43,6 @@ class TestBasic(TestCase):
             open(test_file, 'w').close()
 
     def test_prepare_user_rule(self):
-        line_content = r'2015-12-03 12:11:00 Data is missing on comp21'
-        line_source = None
-        offset = 42
-        front_input = FrontInput(offset, line_content, line_source)
-
-        line_id = 0
-        self.teacher.add_line(line_id, front_input, effect=True)
-
         user_rule = self.teacher.get_rule()
 
         wanted_parser = UserParserIntent(
@@ -57,10 +57,13 @@ class TestBasic(TestCase):
                     converter='to_date'
                 )
             },
-            line_content,
-            offset,
-            line_source,
+            self.effect_front_input.line_content,
+            self.effect_front_input.offset,
+            self.effect_front_input.line_source,
         )
 
-        wanted_rule = UserRuleIntent(line_id, parsers={line_id: wanted_parser})
+        wanted_rule = UserRuleIntent(
+            self.effect_line_id,
+            parsers={self.effect_line_id: wanted_parser}
+        )
         assert user_rule == wanted_rule
