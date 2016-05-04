@@ -7,7 +7,7 @@ from whylog.config import YamlConfig
 from whylog.constraints import IdenticalConstraint
 from whylog.front.utils import FrontInput
 from whylog.teacher import Teacher
-from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent, UserRuleIntent
+from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent
 from whylog.tests.utils import ConfigPathFactory
 
 path_test_files = ['whylog', 'tests', 'tests_teacher', 'test_files']
