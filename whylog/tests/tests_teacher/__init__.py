@@ -117,6 +117,12 @@ class TestBasic(TestCase):
         parser = self.teacher.get_rule().parsers[self.cause1_id]
         assert new_primary_key_groups == parser.primary_key_groups
 
+    def test_setting_log_type(self):
+        new_log_type = '_very_low_likely_log_type'
+        self.teacher.set_log_type(self.effect_id, new_log_type)
+        parser = self.teacher.get_rule().parsers[self.effect_id]
+        assert new_log_type == parser.log_type_name
+
 
 class TestConstraints(TestBasic):
     def _register_identical_constraint(self, constraint_id=1):

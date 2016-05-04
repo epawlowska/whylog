@@ -135,7 +135,7 @@ class Teacher(object):
         self._parsers[line_id].primary_keys = group_numbers
 
     def set_log_type(self, line_id, log_type):
-        pass
+        self._parsers[line_id].log_type = log_type
 
     def register_constraint(self, constraint_id, constraint):
         """
