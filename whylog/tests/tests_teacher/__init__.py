@@ -12,7 +12,7 @@ from whylog.tests.utils import ConfigPathFactory
 path_test_files = ['whylog', 'tests', 'tests_teacher', 'test_files']
 
 
-class TestDefaultRule(TestCase):
+class TestBasic(TestCase):
     def setUp(self):
         test_files_dir = 'empty_config_files'
         path = os.path.join(*path_test_files + [test_files_dir])
