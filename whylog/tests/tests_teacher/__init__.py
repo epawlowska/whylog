@@ -97,7 +97,3 @@ class TestBasic(TestCase):
         assert not user_rule.constraints
         assert not self.teacher._constraint_base
         assert not self.teacher._constraint_links
-
-
-
-
