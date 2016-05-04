@@ -131,7 +131,8 @@ class Teacher(object):
         self.pattern_assistant.set_converter(line_id, group_no, converter)
 
     def set_primary_key(self, line_id, group_numbers):
-        pass
+        # TODO: validate primary_key
+        self._parsers[line_id].primary_keys = group_numbers
 
     def set_log_type(self, line_id, log_type):
         pass

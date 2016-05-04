@@ -109,6 +109,14 @@ class TestBasic(TestCase):
         parser = self.teacher.get_rule().parsers[self.cause2_id]
         assert new_converter == parser.groups[3].converter
 
+    def test_setting_primary_key(self):
+        parser = self.teacher.get_rule().parsers[self.cause1_id]
+        new_primary_key_groups = [1, 2]
+        assert not new_primary_key_groups == parser.primary_key_groups
+        self.teacher.set_primary_key(self.cause1_id, new_primary_key_groups)
+        parser = self.teacher.get_rule().parsers[self.cause1_id]
+        assert new_primary_key_groups == parser.primary_key_groups
+
 
 class TestConstraints(TestBasic):
     def _register_identical_constraint(self, constraint_id=1):
