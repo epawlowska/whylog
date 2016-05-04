@@ -106,6 +106,7 @@ class Teacher(object):
         Removes constraints related with updating line
         TODO: Update related constraints rather than remove.
         """
+        # TODO: verify pattern
         self.pattern_assistant.update_by_pattern(line_id, pattern)
         self._remove_constraints_by_line(line_id)
 
@@ -145,6 +146,7 @@ class Teacher(object):
         :param pattern_groups: groups in pattern that are linked by constraint
         :type pattern_groups: list[PatternGroup]
         """
+        #TODO: validate constraint
         if constraint_id in six.iterkeys(self._constraint_base):
             self.remove_constraint(constraint_id)
 
@@ -241,5 +243,5 @@ class Teacher(object):
         """
         Verifies text patterns and constraints. If they meet all requirements, saves Rule.
         """
-        # TODO: remove mock
+        # TODO: validate rule
         self.config.add_rule(self.get_rule())
