@@ -91,6 +91,7 @@ class Teacher(object):
         Removes line from rule.
         Assumption: line with line_id exists in rule.
         Removes also all constraints related to this line.
+        TODO: Update related constraints rather than remove.
         """
 
         self._remove_constraints_by_line(line_id)
@@ -101,8 +102,11 @@ class Teacher(object):
     def update_pattern(self, line_id, pattern):
         """
         Loads text pattern proposed by user, verifies if it matches line text.
+        Removes constraints related with updating line
+        TODO: Update related constraints rather than remove.
         """
         self.pattern_assistant.update_by_pattern(line_id, pattern)
+        self._remove_constraints_by_line(line_id)
 
     def guess_patterns(self, line_id):
         """
@@ -148,22 +152,20 @@ class Teacher(object):
         Removes constraint from rule.
         Assumption: Constraint already exists in rule.
         """
-        self._constraint_links = self._constraint_links.remove_links_by_constraint(constraint_id)
+        self._constraint_links.remove_links_by_constraint(constraint_id)
         del self._constraint_base[constraint_id]
 
     def _remove_constraints_by_line(self, line_id):
-        self._constraint_links.remove_links_by_line(line_id)
-        self._sync_constraint_base_with_links()
+        constraints_to_remove = self._constraint_links.remove_links_by_line(line_id)
+        for constraint_id in constraints_to_remove:
+            self.remove_constraint(constraint_id)
 
     def _remove_constraint_by_group(self, group):
-        self._constraint_links.remove_links_by_group(group.line_id, group.number)
-        self._sync_constraint_base_with_links()
-
-    def _sync_constraint_base_with_links(self):
-        ids_from_links = self._constraint_links.distinct_constraint_ids()
-        for constraint_id in six.iterkeys(self._constraint_base):
-            if constraint_id not in ids_from_links:
-                del self._constraint_base[constraint_id]
+        constraints_to_remove = self._constraint_links.remove_links_by_group(
+            group.line_id, group.number
+        )
+        for constraint_id in constraints_to_remove:
+            self.remove_constraint(constraint_id)
 
     def set_causes_relation(self, relation):
         """
