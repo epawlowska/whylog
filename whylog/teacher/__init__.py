@@ -126,7 +126,7 @@ class Teacher(object):
     def set_log_type(self, line_id, log_type):
         pass
 
-    def register_constraint(self, constraint_id, pattern_groups, constraint):
+    def register_constraint(self, constraint_id, constraint):
         """
         Adds new constraint to rule.
         If constraint_id already exists, constraint with this constraint_id
@@ -139,7 +139,7 @@ class Teacher(object):
 
         self._constraint_base[constraint_id] = constraint
         new_constraint_links = [
-            (group.line_id, group.number, constraint_id) for group in pattern_groups
+            (line_id, group_no, constraint_id) for (line_id, group_no) in constraint.groups
         ]
         self._constraint_links.add_links(new_constraint_links)
 
@@ -148,7 +148,7 @@ class Teacher(object):
         Removes constraint from rule.
         Assumption: Constraint already exists in rule.
         """
-        self._constraint_links.remove_links_by_constraint(constraint_id)
+        self._constraint_links = self._constraint_links.remove_links_by_constraint(constraint_id)
         del self._constraint_base[constraint_id]
 
     def _remove_constraints_by_line(self, line_id):
