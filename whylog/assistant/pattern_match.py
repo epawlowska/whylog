@@ -3,6 +3,15 @@ from collections import namedtuple
 ParamGroup = namedtuple('ParamGroup', ['content', 'converter'])
 
 
+class ParamGroup(object):
+    def __init__(self, content, converter):
+        self.content = content
+        self.converter = converter
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+
 class PatternMatch(object):
     """
     :type param_groups: dict[int, ParamGroup]

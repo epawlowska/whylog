@@ -126,8 +126,9 @@ class Teacher(object):
         else:
             raise NotUniqueParserName(name)
 
-    def set_converter(self, pattern_group, converter):
-        pass
+    def set_converter(self, line_id, group_no, converter):
+        # TODO: validate converter
+        self.pattern_assistant.set_converter(line_id, group_no, converter)
 
     def set_primary_key(self, line_id, group_numbers):
         pass

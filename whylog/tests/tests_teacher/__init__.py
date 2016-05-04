@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from whylog.assistant.pattern_match import ParamGroup
 from whylog.assistant.regex_assistant import RegexAssistant
+from whylog.assistant.const import ConverterType
 from whylog.config import YamlConfig
 from whylog.constraints import IdenticalConstraint
 from whylog.front.utils import FrontInput
@@ -98,6 +99,15 @@ class TestBasic(TestCase):
         self.assertRaises(
             NotUniqueParserName, self.teacher.set_pattern_name, self.cause1_id, new_name
         )
+
+    def test_setting_converter(self):
+        parser = self.teacher.get_rule().parsers[self.cause2_id]
+        new_converter = ConverterType.TO_FLOAT
+        assert not new_converter == parser.groups[3].converter
+
+        self.teacher.set_converter(self.cause2_id, 3, new_converter)
+        parser = self.teacher.get_rule().parsers[self.cause2_id]
+        assert new_converter == parser.groups[3].converter
 
 
 class TestConstraints(TestBasic):
