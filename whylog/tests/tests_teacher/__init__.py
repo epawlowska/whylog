@@ -4,7 +4,7 @@ from unittest import TestCase
 from whylog.assistant.pattern_match import ParamGroup
 from whylog.assistant.regex_assistant import RegexAssistant
 from whylog.config import YamlConfig
-from whylog.front import FrontInput
+from whylog.front.utils import FrontInput
 from whylog.teacher import Teacher
 from whylog.teacher.user_intent import UserParserIntent, UserRuleIntent
 from whylog.tests.utils import ConfigPathFactory
