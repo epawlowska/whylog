@@ -9,7 +9,9 @@ from whylog.constraints.const import ConstraintType
 from whylog.constraints.exceptions import (
     ConstructorGroupsCountError, ConstructorParamsError, WrongConstraintClassSetup
 )
+from whylog.constraints.validation_problems import WrongTimeDeltas
 from whylog.teacher.user_intent import UserConstraintIntent
+from whylog.teacher.rule_validation_problems import ValidationResult
 
 
 @six.add_metaclass(ABCMeta)
@@ -126,6 +128,10 @@ class AbstractConstraint(object):
 
         pass
 
+    @abstractmethod
+    def validate(self, group_contents):
+        pass
+
 
 class TimeConstraint(AbstractConstraint):
     """
@@ -183,6 +189,14 @@ class TimeConstraint(AbstractConstraint):
 
     def verify(self, group_contents, param_dict):
         pass
+
+    def validate(self, group_contents):
+        warnings = []
+        errors = []
+        if not self._min_delta is None and not self._max_delta is None:
+            if self._min_delta > self._max_delta:
+                errors.append(WrongTimeDeltas(self._min_delta, self._max_delta))
+        return ValidationResult(errors, warnings)
 
 
 class IdenticalConstraint(AbstractConstraint):
