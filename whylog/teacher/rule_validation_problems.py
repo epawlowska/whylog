@@ -2,7 +2,6 @@ import itertools
 
 from collections import namedtuple
 
-
 ValidationResult = namedtuple('ValidationResult', ['errors', 'warnings'])
 
 
@@ -71,6 +70,3 @@ class WrongPrimaryKey(RuleValidationProblem):
     def __str__(self):
         return 'Primary key %s should be subset of pattern groups %s, line id: %s' % \
                (self.primary_key, self.group_numbers, self.line_id)
-
-
-

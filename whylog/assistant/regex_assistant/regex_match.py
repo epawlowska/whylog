@@ -1,12 +1,12 @@
 import six
 
-from whylog.converters import ConverterType
 from whylog.assistant.pattern_match import ParamGroup, PatternMatch
 from whylog.assistant.regex_assistant.guessing import guess_pattern_match
 from whylog.assistant.regex_assistant.regex import (
     NotMatchingRegexError, regex_groups, verify_regex
 )
 from whylog.assistant.validation_problems import NotMatchingPatternProblem
+from whylog.converters import ConverterType
 from whylog.teacher.rule_validation_problems import ValidationResult
 
 
@@ -112,10 +112,3 @@ class RegexMatch(object):
         return ValidationResult.result_from_results(
             [pattern_validation_result, converters_validation_result]
         )
-
-
-
-
-
-
-

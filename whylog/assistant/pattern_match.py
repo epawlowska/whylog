@@ -5,7 +5,6 @@ from whylog.converters import CONVERTION_MAPPING, STRING
 from whylog.converters.exceptions import UnsupportedConverterError
 from whylog.teacher.rule_validation_problems import ValidationResult
 
-
 PatternMatch = namedtuple('PatternMatch', ['line_text', 'pattern', 'param_groups'])
 
 
@@ -32,4 +31,3 @@ class ParamGroup(object):
         except ValueError:
             errors.append(WrongConverterProblem(group_content, converter_type, line_id))
         return ValidationResult(errors=errors, warnings=[])
-

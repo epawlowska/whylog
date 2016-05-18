@@ -3,7 +3,6 @@ from unittest import TestCase
 
 import six
 
-from whylog.converters import ConverterType
 from whylog.assistant.pattern_match import ParamGroup
 from whylog.assistant.regex_assistant import RegexAssistant
 from whylog.assistant.regex_assistant.regex import create_obvious_regex
@@ -13,6 +12,7 @@ from whylog.config.filename_matchers import WildCardFilenameMatcher
 from whylog.config.investigation_plan import LineSource
 from whylog.config.log_type import LogType
 from whylog.constraints import IdenticalConstraint
+from whylog.converters import ConverterType
 from whylog.front.utils import FrontInput
 from whylog.teacher import Teacher
 from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent
@@ -159,8 +159,7 @@ class TestParser(TestBase):
 
         validation_result = self.teacher.validate()
         converter_problem = WrongConverterProblem(
-            parser.groups[date_group_no].content,
-            parser.groups[date_group_no].converter,
+            parser.groups[date_group_no].content, parser.groups[date_group_no].converter,
             self.effect_id
         )
         assert converter_problem in validation_result.errors
@@ -181,9 +180,7 @@ class TestParser(TestBase):
 
         validation_result = self.teacher.validate()
         primary_key_problem = WrongPrimaryKey(
-            wrong_primary_key_groups,
-            parser.groups.keys(),
-            self.effect_id
+            wrong_primary_key_groups, parser.groups.keys(), self.effect_id
         )
         assert primary_key_problem in validation_result.errors
 
