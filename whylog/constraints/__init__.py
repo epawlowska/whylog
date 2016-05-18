@@ -9,7 +9,7 @@ from whylog.constraints.const import ConstraintType
 from whylog.constraints.exceptions import (
     ConstructorGroupsCountError, ConstructorParamsError, WrongConstraintClassSetup
 )
-from whylog.constraints.validation_problems import WrongTimeDeltas
+from whylog.constraints.validation_problems import WrongTimeDeltas, ConstraintVerificationFail
 from whylog.teacher.user_intent import UserConstraintIntent
 from whylog.teacher.rule_validation_problems import ValidationResult
 
@@ -128,9 +128,25 @@ class AbstractConstraint(object):
 
         pass
 
-    @abstractmethod
-    def validate(self, group_contents):
+    def _validate_params(self):
+        """
+        Validate constraint params (self.params)
+        Returns
+        """
         pass
+
+    def _validate_verification(self, group_contents):
+        warnings = []
+        if not self.verify(group_contents, self.params):
+            warnings.append(ConstraintVerificationFail(self.TYPE, group_contents, self.params))
+        return ValidationResult(errors=[], warnings=warnings)
+
+    def validate(self, group_contents):
+        param_validation_result = self._validate_params()
+        verification_validation_result = self._validate_verification(group_contents)
+        return ValidationResult.result_from_results(
+            [param_validation_result, verification_validation_result]
+        )
 
 
 class TimeConstraint(AbstractConstraint):
@@ -190,13 +206,14 @@ class TimeConstraint(AbstractConstraint):
     def verify(self, group_contents, param_dict):
         pass
 
-    def validate(self, group_contents):
-        warnings = []
+    def _validate_params(self):
         errors = []
-        if not self._min_delta is None and not self._max_delta is None:
-            if self._min_delta > self._max_delta:
-                errors.append(WrongTimeDeltas(self._min_delta, self._max_delta))
-        return ValidationResult(errors, warnings)
+        param_min_delta = self.params.get(self.MIN_DELTA)
+        param_max_delta = self.params.get(self.MAX_DELTA)
+        if not param_min_delta is None and not param_max_delta is None:
+            if param_min_delta > param_max_delta:
+                errors.append(WrongTimeDeltas(param_min_delta, param_max_delta))
+        return ValidationResult(errors=errors, warnings=[])
 
 
 class IdenticalConstraint(AbstractConstraint):

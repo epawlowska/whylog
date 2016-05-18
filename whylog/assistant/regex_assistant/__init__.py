@@ -1,6 +1,9 @@
+import six
+
 from whylog.assistant import AbstractAssistant
 from whylog.assistant.const import AssistantType
 from whylog.assistant.regex_assistant.regex_match import RegexMatch
+from whylog.teacher.rule_validation_problems import ValidationResult
 
 
 class RegexAssistant(AbstractAssistant):
@@ -18,7 +21,7 @@ class RegexAssistant(AbstractAssistant):
         self.regex_matches = {}
 
     def add_line(self, line_id, line_object):
-        regex_match = RegexMatch(line_object)
+        regex_match = RegexMatch(line_id, line_object)
         self.regex_matches[line_id] = regex_match
 
     def remove_line(self, line_id):
@@ -41,12 +44,8 @@ class RegexAssistant(AbstractAssistant):
     def set_converter(self, line_id, group_no, converter):
         self.regex_matches[line_id].set_converter(group_no, converter)
 
-    def verify(self, line_id):
-        """
-        Verifies regex properties such as:
-        - matching a whole text
-        - matching text in a one way only
-        - proper data type assigned to regex group
-        If properties are not met, proper exceptions are returned.
-        """
-        return self.regex_matches[line_id].verify()
+    def validate(self):
+        validation_results = [
+            regex_match.validate() for regex_match in six.itervalues(self.regex_matches)
+        ]
+        return ValidationResult.result_from_results(validation_results)

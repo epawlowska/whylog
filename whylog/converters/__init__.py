@@ -4,6 +4,8 @@ import dateutil.parser
 import six
 from frozendict import frozendict
 
+from whylog.converters.consts import ConverterType
+
 
 @six.add_metaclass(ABCMeta)
 class AbstractConverter(object):
@@ -32,11 +34,11 @@ class DateConverter(AbstractConverter):
         return dateutil.parser.parse(pattern_group, fuzzy=True)
 
 
-STRING = 'string'
+STRING = ConverterType.TO_STRING
 CONVERTION_MAPPING = frozendict(
     {
-        'date': DateConverter,
-        'int': IntConverter,
-        'float': FloatConverter
+        ConverterType.TO_DATE: DateConverter,
+        ConverterType.TO_INT: IntConverter,
+        ConverterType.TO_FLOAT: FloatConverter
     }
 )
