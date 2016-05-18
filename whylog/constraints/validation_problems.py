@@ -1,7 +1,7 @@
 from whylog.teacher.rule_validation_problems import ConstraintValidationProblem
 
 
-class ConstraintVerificationFail(ConstraintValidationProblem):
+class ConstraintVerificationProblem(ConstraintValidationProblem):
     def __init__(self, constraint_type, group_contents, params):
         self.constraint_type = constraint_type
         self.group_contents = group_contents
@@ -16,7 +16,7 @@ class TimeConstraintValidationProblem(ConstraintValidationProblem):
     pass
 
 
-class WrongTimeDeltas(TimeConstraintValidationProblem):
+class WrongTimeDeltasProblem(TimeConstraintValidationProblem):
     def __init__(self, min_time_delta, max_time_delta):
         self.min_time_delta = min_time_delta
         self.max_time_delta = max_time_delta

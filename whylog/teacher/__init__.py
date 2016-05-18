@@ -4,7 +4,7 @@ from collections import Counter
 
 from whylog.teacher.constraint_links_base import ConstraintLinksBase
 from whylog.teacher.rule_validation_problems import (
-    NotUniqueParserName, ValidationResult, WrongLogType, WrongPrimaryKey
+    NotUniqueParserNameProblem, ValidationResult, WrongLogTypeProblem, WrongPrimaryKeyProblem
 )
 from whylog.teacher.user_intent import UserParserIntent, UserRuleIntent
 
@@ -165,7 +165,7 @@ class Teacher(object):
             pattern_match = self.pattern_assistant.get_pattern_match(line_id)
             group_numbers = pattern_match.param_groups.keys()
             if set(primary_key) - set(group_numbers):
-                errors.append(WrongPrimaryKey(primary_key, group_numbers, line_id))
+                errors.append(WrongPrimaryKeyProblem(primary_key, group_numbers, line_id))
         return ValidationResult(errors=errors, warnings=[])
 
     def _validate_pattern_names(self):
@@ -175,29 +175,27 @@ class Teacher(object):
         for line_id in six.iterkeys(self._parsers):
             parser = self._parsers[line_id]
             blacklist_except_name = set(names_blacklist) - set([parser.name])
-            print(parser.name)
             if names_counter[parser.name] > 1 or \
                     not self.config.is_free_parser_name(parser.name, blacklist_except_name):
-                errors.append(NotUniqueParserName(line_id))
+                errors.append(NotUniqueParserNameProblem(line_id))
         return ValidationResult(errors=errors, warnings=[])
-
-    def _validate_constraints(self):
-        return ValidationResult.result_from_results(
-            [constraint.validate for constraint in six.itervalues(self._constraint_base)]
-        )
 
     def _validate_log_type(self):
         errors = []
         for line_id in six.iterkeys(self._parsers):
             parser = self._parsers[line_id]
             if parser.log_type is None:
-                errors.append(WrongLogType(line_id))
+                errors.append(WrongLogTypeProblem(line_id))
         return ValidationResult(errors=errors, warnings=[])
+
+    def _validate_constraints(self):
+        return ValidationResult.result_from_results(
+            [constraint.validate() for constraint in six.itervalues(self._constraint_base)]
+        )
 
     def validate(self):
         """
-        Verifies if text patterns and constraints meet all requirements.
-        E.g it is required text pattern match its line in one way only.
+        Verifies if Rule is ready to save.
         """
 
         primary_keys_validation_result = self._validate_primary_keys()

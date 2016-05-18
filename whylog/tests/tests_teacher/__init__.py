@@ -16,7 +16,7 @@ from whylog.converters import ConverterType
 from whylog.front.utils import FrontInput
 from whylog.teacher import Teacher
 from whylog.teacher.user_intent import UserConstraintIntent, UserParserIntent
-from whylog.teacher.rule_validation_problems import NotUniqueParserName, WrongPrimaryKey, WrongLogType, ValidationResult
+from whylog.teacher.rule_validation_problems import NotUniqueParserNameProblem, WrongPrimaryKeyProblem, WrongLogTypeProblem, ValidationResult
 from whylog.tests.utils import ConfigPathFactory
 
 path_test_files = ['whylog', 'tests', 'tests_teacher', 'test_files']
@@ -84,13 +84,10 @@ class TestParser(TestBase):
     def _initial_validation_check(self):
         validation_result = self.teacher.validate()
         assert not validation_result.warnings
-        initial_errors = [
-            WrongLogType(self.effect_id),
-            WrongLogType(self.cause1_id),
-            WrongLogType(self.cause2_id),
-        ]
-        wanted_result = ValidationResult(initial_errors, [])
-        assert validation_result.errors == wanted_result.errors
+        assert len(validation_result.errors) == 3
+        assert WrongLogTypeProblem(self.effect_id) in validation_result.errors
+        assert WrongLogTypeProblem(self.cause1_id) in validation_result.errors
+        assert WrongLogTypeProblem(self.cause2_id) in validation_result.errors
 
     def test_default_user_parser(self):
         self._initial_validation_check()
@@ -131,8 +128,8 @@ class TestParser(TestBase):
         assert effect_parser_name == rule.parsers[self.cause1_id].pattern_name
 
         validation_result = self.teacher.validate()
-        effect_name_problem = NotUniqueParserName(self.cause1_id)
-        cause1_name_problem = NotUniqueParserName(self.effect_id)
+        effect_name_problem = NotUniqueParserNameProblem(self.cause1_id)
+        cause1_name_problem = NotUniqueParserNameProblem(self.effect_id)
         assert effect_name_problem in validation_result.errors
         assert cause1_name_problem in validation_result.errors
 
@@ -179,7 +176,7 @@ class TestParser(TestBase):
         assert wrong_primary_key_groups == parser.primary_key_groups
 
         validation_result = self.teacher.validate()
-        primary_key_problem = WrongPrimaryKey(
+        primary_key_problem = WrongPrimaryKeyProblem(
             wrong_primary_key_groups, parser.groups.keys(), self.effect_id
         )
         assert primary_key_problem in validation_result.errors

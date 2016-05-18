@@ -1,7 +1,7 @@
-from whylog.teacher.rule_validation_problems import PatternValidationProblem
+from whylog.teacher.rule_validation_problems import PatternAssistantValidationProblem
 
 
-class NotMatchingPatternProblem(PatternValidationProblem):
+class NotMatchingPatternProblem(PatternAssistantValidationProblem):
     def __init__(self, line_id):
         self.line_id = line_id
 
@@ -12,7 +12,7 @@ class NotMatchingPatternProblem(PatternValidationProblem):
         return 'Pattern does not match line, line id: %s' % (self.line_id,)
 
 
-class WrongConverterProblem(PatternValidationProblem):
+class WrongConverterProblem(PatternAssistantValidationProblem):
     def __init__(self, group_no, converter, line_id):
         self.group_no = group_no
         self.converter = converter
@@ -22,5 +22,5 @@ class WrongConverterProblem(PatternValidationProblem):
         return self.__dict__ == other.__dict__
 
     def __str__(self):
-        return 'Wrong group converter, converter: %s, group: %s, line id: %s' %\
+        return 'Wrong group converter, converter type: %s, group number: %s, line id: %s' %\
                (self.converter, self.group_no, self.line_id)

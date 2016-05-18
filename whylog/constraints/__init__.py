@@ -9,7 +9,7 @@ from whylog.constraints.const import ConstraintType
 from whylog.constraints.exceptions import (
     ConstructorGroupsCountError, ConstructorParamsError, WrongConstraintClassSetup
 )
-from whylog.constraints.validation_problems import WrongTimeDeltas, ConstraintVerificationFail
+from whylog.constraints.validation_problems import WrongTimeDeltasProblem, ConstraintVerificationProblem
 from whylog.teacher.user_intent import UserConstraintIntent
 from whylog.teacher.rule_validation_problems import ValidationResult
 
@@ -131,14 +131,13 @@ class AbstractConstraint(object):
     def _validate_params(self):
         """
         Validate constraint params (self.params)
-        Returns
         """
         pass
 
     def _validate_verification(self, group_contents):
         warnings = []
         if not self.verify(group_contents, self.params):
-            warnings.append(ConstraintVerificationFail(self.TYPE, group_contents, self.params))
+            warnings.append(ConstraintVerificationProblem(self.TYPE, group_contents, self.params))
         return ValidationResult(errors=[], warnings=warnings)
 
     def validate(self, group_contents):
@@ -212,7 +211,7 @@ class TimeConstraint(AbstractConstraint):
         param_max_delta = self.params.get(self.MAX_DELTA)
         if not param_min_delta is None and not param_max_delta is None:
             if param_min_delta > param_max_delta:
-                errors.append(WrongTimeDeltas(param_min_delta, param_max_delta))
+                errors.append(WrongTimeDeltasProblem(param_min_delta, param_max_delta))
         return ValidationResult(errors=errors, warnings=[])
 
 

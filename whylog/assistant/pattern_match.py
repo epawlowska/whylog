@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from whylog.assistant.validation_problems import WrongConverterProblem
-from whylog.converters import CONVERTION_MAPPING, STRING
+from whylog.converters import CONVERTION_MAPPING, ConverterType
 from whylog.converters.exceptions import UnsupportedConverterError
 from whylog.teacher.rule_validation_problems import ValidationResult
 
@@ -19,7 +19,7 @@ class ParamGroup(object):
     def validate_converter(self, line_id):
         group_content = self.content
         converter_type = self.converter
-        if converter_type == STRING:
+        if converter_type == ConverterType.TO_STRING:
             return ValidationResult(errors=[], warnings=[])
         errors = []
         converter = CONVERTION_MAPPING.get(converter_type)
