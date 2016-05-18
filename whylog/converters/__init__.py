@@ -4,7 +4,12 @@ import dateutil.parser
 import six
 from frozendict import frozendict
 
-from whylog.converters.consts import ConverterType
+
+class ConverterType:
+    TO_DATE = 'date'
+    TO_FLOAT = 'float'
+    TO_INT = 'int'
+    TO_STRING = 'string'
 
 
 @six.add_metaclass(ABCMeta)

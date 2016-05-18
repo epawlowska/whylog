@@ -10,7 +10,7 @@ import six
 from dateutil.parser import parse as date_parse
 
 from whylog.assistant.const import DateParams
-from whylog.converters.consts import ConverterType
+from whylog.converters import ConverterType
 from whylog.assistant.regex_assistant.regex import create_date_regex
 from whylog.assistant.span import Span
 from whylog.assistant.span_list import SpanList

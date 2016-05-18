@@ -4,7 +4,7 @@ Auxilary methods for Span
 """
 import six
 
-from whylog.converters.consts import ConverterType
+from whylog.converters import ConverterType
 from whylog.exceptions import WhylogError
 
 

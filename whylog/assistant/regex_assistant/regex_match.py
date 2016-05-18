@@ -1,6 +1,6 @@
 import six
 
-from whylog.converters.consts import ConverterType
+from whylog.converters import ConverterType
 from whylog.assistant.pattern_match import ParamGroup, PatternMatch
 from whylog.assistant.regex_assistant.guessing import guess_pattern_match
 from whylog.assistant.regex_assistant.regex import (

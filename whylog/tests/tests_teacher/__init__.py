@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import six
 
-from whylog.converters.consts import ConverterType
+from whylog.converters import ConverterType
 from whylog.assistant.pattern_match import ParamGroup
 from whylog.assistant.regex_assistant import RegexAssistant
 from whylog.assistant.regex_assistant.regex import create_obvious_regex
