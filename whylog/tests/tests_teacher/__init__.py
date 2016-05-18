@@ -106,7 +106,7 @@ class TestParser(TestBase):
             {
                 1: ParamGroup(
                     content='2015-12-03 12:11:00',
-                    converter='date'
+                    converter=ConverterType.TO_DATE
                 )
             },
             self.effect_front_input.line_content,
