@@ -57,11 +57,11 @@ class AbstractLogReaderConstraint(ConstraintBase):
 
 
 @six.add_metaclass(ABCMeta)
-class AbstractUserConstraint(ConstraintBase):
+class AbstractUserConstraint(AbstractLogReaderConstraint):
     def __init__(self, groups, params=None):
-        super(AbstractUserConstraint, self).__init__(groups, params)
         self._check_constructor_groups()
         self._check_constructor_params()
+        super(AbstractUserConstraint, self).__init__(groups, params)
 
     def _check_constructor_groups(self):
         groups_count = len(self.groups)
