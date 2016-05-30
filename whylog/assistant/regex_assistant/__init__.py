@@ -1,3 +1,5 @@
+import six
+
 from whylog.assistant import AbstractAssistant
 from whylog.assistant.const import AssistantType
 from whylog.assistant.regex_assistant.regex_match import RegexMatch
@@ -45,10 +47,4 @@ class RegexAssistant(AbstractAssistant):
         self.regex_matches[line_id].set_primary_key(primary_key)
 
     def validate(self, line_id):
-        """
-        Verifies regex properties such as:
-        - matching a whole text
-        - proper data converter assigned to regex group
-        If properties are not met, proper exceptions are returned.
-        """
-        return {}  # TODO: fix it
+        return self.regex_matches[line_id].validate()

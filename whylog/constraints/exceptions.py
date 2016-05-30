@@ -33,22 +33,7 @@ class WrongConstraintClassSetup(VerificationError):
         return "Constraint object '%s' was incorrectly constructed" % self._constraint_type
 
 
-class NoTimeDeltasError(WrongConstraintClassSetup):
-    def __init__(self, constraint_type, min_delta_name, max_delta_name):
-        super(NoTimeDeltasError, self).__init__(constraint_type)
-        self.min_delta_name = min_delta_name
-        self.max_delta_name = max_delta_name
-
-    def __str__(self):
-        return 'Neither %s or %s were provided in constraint %s. At least one of them is mandatory' % \
-               (self.min_delta_name, self.max_delta_name, self._constraint_type)
-
-
-class ConstructorError(ConstraintError):
-    pass
-
-
-class ConstructorParamsError(ConstructorError):
+class ConstructorParamsError(ConstraintError):
     def __init__(self, constraint_type, correct_param_names, incorrect_param_names):
         self.constraint_type = constraint_type
         self.correct_params_names = correct_param_names
@@ -60,7 +45,7 @@ class ConstructorParamsError(ConstructorError):
         )
 
 
-class ConstructorGroupsCountError(ConstructorError):
+class ConstructorGroupsCountError(ConstraintError):
     def __init__(self, constraint_type, groups_count, minimal_groups_count, maximal_groups_count):
         self.constraint_type = constraint_type
         self.groups_count = groups_count

@@ -3,6 +3,9 @@ from whylog.config.log_type import LogType
 from whylog.constraints import TimeConstraint
 from whylog.tests.tests_teacher import TestRuleBase
 
+from whylog.assistant.validation_problems import (
+    InvalidPrimaryKeyProblem, NotMatchingPatternProblem, WrongConverterProblem
+)
 from whylog.teacher.rule_validation_problems import (  # isort:skip
     NoEffectParserProblem, NotSetLogTypeProblem, NotUniqueParserNameProblem, ParserCountProblem
 )  # yapf: disable
